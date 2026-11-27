@@ -1,0 +1,4975 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="公務員ナビ" />
+  <meta name="theme-color" content="#0f294a" />
+  <title>公務員試験 学習＆日程ナビ</title>
+  <style>
+    /* ==========================================================================
+       1. デザインシステム & リセット（外部CDN・外部フォント一切不使用・完全オフライン）
+       ========================================================================== */
+    :root {
+      --navy: #0f294a;
+      --navy-dark: #08182d;
+      --navy-light: #1c4478;
+      --bg: #eef2f6;
+      --card: #ffffff;
+      --text: #0f172a;
+      --text-sub: #475569;
+      --text-muted: #94a3b8;
+      --border: #e2e8f0;
+      --blue: #2563eb;
+      --blue-dark: #1d4ed8;
+      --blue-bg: #eff6ff;
+      --blue-border: #bfdbfe;
+      --gold: #eab308;
+      --gold-bg: #fefce8;
+      --gold-border: #fde047;
+      --emerald: #059669;
+      --emerald-bg: #ecfdf5;
+      --emerald-border: #a7f3d0;
+      --rose: #e11d48;
+      --rose-bg: #fff1f2;
+      --rose-border: #fecdd3;
+      --purple: #7c3aed;
+      --purple-bg: #f5f3ff;
+      --purple-border: #ddd6fe;
+      --amber: #d97706;
+      --amber-bg: #fffbeb;
+      --amber-border: #fde68a;
+      --teal: #0d9488;
+      --teal-bg: #f0fdfa;
+      --teal-border: #99f6e4;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      max-width: 100vw;
+      overflow-x: hidden;
+      background-color: #d5dee8;
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", Meiryo, sans-serif;
+      -webkit-text-size-adjust: 100%;
+      line-height: 1.5;
+    }
+
+    /* モバイルファースト アプリシェル（PC・iPad表示時は中央520px） */
+    .app-shell {
+      max-width: 520px;
+      width: 100%;
+      min-height: 100dvh;
+      margin: 0 auto;
+      background-color: var(--bg);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      box-shadow: 0 0 36px rgba(15, 41, 74, 0.16);
+    }
+
+    /* iOS Safari 自動ズーム防止のためフォーム入力は16px以上 */
+    input[type="text"],
+    input[type="url"],
+    input[type="date"],
+    input[type="number"],
+    select,
+    textarea {
+      font-size: 16px !important;
+      font-family: inherit;
+      color: var(--text);
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 10px 12px;
+      width: 100%;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--blue);
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+    }
+
+    button {
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      background: none;
+      padding: 0;
+      color: inherit;
+      touch-action: manipulation;
+    }
+
+    .num {
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ==========================================================================
+       2. スティッキーヘッダー
+       ========================================================================== */
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+      color: #ffffff;
+      padding: max(12px, env(safe-area-inset-top)) 14px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      box-shadow: 0 2px 10px rgba(15, 41, 74, 0.24);
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .brand-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(250, 204, 21, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .app-title {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .app-sub {
+      margin: 1px 0 0;
+      font-size: 10px;
+      color: #cbd5e1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .header-pill {
+      flex-shrink: 0;
+      max-width: 52%;
+      background: rgba(255, 255, 255, 0.13);
+      border: 1px solid rgba(250, 204, 21, 0.5);
+      color: #ffffff;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 10px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      min-height: 34px;
+    }
+
+    .header-pill-text {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .gold-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #facc15;
+      flex-shrink: 0;
+    }
+
+    /* ==========================================================================
+       3. メインコンテンツ領域 & 共通コンポーネント
+       ========================================================================== */
+    .app-main {
+      flex: 1;
+      padding: 14px 14px calc(92px + env(safe-area-inset-bottom));
+    }
+
+    .tab-panel {
+      display: none;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .tab-panel.active {
+      display: flex;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 15px;
+      border: 1px solid var(--border);
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
+    }
+
+    .card-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .card-title {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .card-desc {
+      margin: 2px 0 0;
+      font-size: 11px;
+      color: var(--text-sub);
+    }
+
+    .btn-cta {
+      width: 100%;
+      min-height: 46px;
+      background: var(--blue);
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 800;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.24);
+    }
+
+    .btn-navy {
+      width: 100%;
+      min-height: 44px;
+      background: var(--navy);
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 800;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn-outline {
+      width: 100%;
+      min-height: 42px;
+      background: #ffffff;
+      color: var(--text);
+      border: 1px solid #cbd5e1;
+      font-size: 12px;
+      font-weight: 800;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .bar-track {
+      width: 100%;
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: var(--blue);
+      border-radius: 999px;
+      transition: width 0.25s ease, background-color 0.25s ease;
+    }
+
+    .bar-fill.high {
+      background: var(--emerald);
+    }
+
+    .h-scroll {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    .h-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    .chip-btn {
+      min-height: 36px;
+      padding: 0 13px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+      background: #f1f5f9;
+      color: var(--text-sub);
+      flex-shrink: 0;
+    }
+
+    .chip-btn.active {
+      background: var(--navy);
+      color: #ffffff;
+    }
+
+    /* ==========================================================================
+       4. 科目別タスク進捗カード共通（科目名だけ＋進行度バー＋操作ボタン）
+       ========================================================================== */
+    .subj-task-card {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      margin-bottom: 9px;
+      transition: border-color 0.15s, background-color 0.15s;
+    }
+
+    .subj-task-card:last-child {
+      margin-bottom: 0;
+    }
+
+    .subj-task-card.completed {
+      background: #f0fdf4;
+      border-color: var(--emerald-border);
+    }
+
+    .subj-task-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .subj-task-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.3;
+      min-width: 0;
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .subj-task-card.completed .subj-task-title {
+      color: #065f46;
+    }
+
+    .subj-task-stat {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .stat-ratio {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--text-sub);
+    }
+
+    .stat-pct {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--blue);
+      min-width: 38px;
+      text-align: right;
+    }
+
+    .stat-pct.done {
+      color: var(--emerald);
+    }
+
+    .subj-task-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      margin-top: 9px;
+    }
+
+    .step-btn-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-step {
+      min-width: 44px;
+      height: 36px;
+      padding: 0 10px;
+      border-radius: 10px;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-step.plus {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: #ffffff;
+    }
+
+    .btn-step.add-set {
+      background: var(--blue-bg);
+      border-color: var(--blue-border);
+      color: var(--blue);
+      font-size: 11px;
+    }
+
+    .btn-done-toggle {
+      min-height: 36px;
+      padding: 0 12px;
+      border-radius: 10px;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--text-sub);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .btn-done-toggle.active {
+      background: var(--emerald);
+      border-color: var(--emerald);
+      color: #ffffff;
+    }
+
+    .btn-del-mini {
+      width: 34px;
+      height: 36px;
+      border-radius: 10px;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ==========================================================================
+       5. タブ1: ホーム（Home）
+       ========================================================================== */
+    .hero-card {
+      background: linear-gradient(135deg, var(--navy) 0%, #1e40af 100%);
+      color: #ffffff;
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 6px 18px rgba(15, 41, 74, 0.22);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .hero-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #facc15;
+      color: #0f172a;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+
+    .streak-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(16, 185, 129, 0.24);
+      border: 1px solid rgba(167, 243, 208, 0.55);
+      color: #ecfdf5;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 999px;
+    }
+
+    .hero-body-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .hero-name {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 800;
+      line-height: 1.3;
+    }
+
+    .hero-meta {
+      margin: 4px 0 0;
+      font-size: 11px;
+      color: #dbeafe;
+    }
+
+    .hero-dday {
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 14px;
+      padding: 9px 12px;
+      text-align: center;
+      min-width: 84px;
+      flex-shrink: 0;
+    }
+
+    .hero-dday small {
+      display: block;
+      font-size: 10px;
+      color: #bfdbfe;
+      font-weight: 700;
+    }
+
+    .hero-dday strong {
+      display: block;
+      font-size: 25px;
+      font-weight: 800;
+      line-height: 1.1;
+      margin: 2px 0;
+      color: #ffffff;
+    }
+
+    .hero-dday span {
+      font-size: 10px;
+      font-weight: 800;
+      color: #fde047;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .kpi-box {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 13px 14px;
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      text-align: left;
+    }
+
+    .kpi-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-sub);
+    }
+
+    .kpi-value-row {
+      margin-top: 4px;
+      display: flex;
+      align-items: baseline;
+      gap: 3px;
+    }
+
+    .kpi-value {
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1.1;
+      color: var(--text);
+    }
+
+    .kpi-value.accent { color: var(--blue); }
+    .kpi-value.green { color: var(--emerald); }
+
+    .kpi-unit {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-sub);
+    }
+
+    .kpi-foot {
+      margin: 6px 0 0;
+      font-size: 11px;
+      color: var(--text-sub);
+      font-weight: 700;
+    }
+
+    .top-item {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+
+    .top-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .top-item-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .rank-num {
+      width: 21px;
+      height: 21px;
+      border-radius: 50%;
+      background: var(--navy);
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .rank-num.rank-1 { background: #d97706; }
+
+    .cat-pill {
+      font-size: 10px;
+      font-weight: 800;
+      background: var(--blue-bg);
+      color: var(--blue);
+      padding: 2px 7px;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+
+    .top-subj-name {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .top-item-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      margin-top: 9px;
+      flex-wrap: wrap;
+    }
+
+    .quick-log-group {
+      display: inline-flex;
+      gap: 6px;
+    }
+
+    .btn-log {
+      min-height: 36px;
+      padding: 0 11px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-log-blue { background: var(--blue); color: #ffffff; }
+    .btn-log-navy { background: var(--navy); color: #ffffff; }
+
+    .btn-video-jump {
+      min-height: 36px;
+      padding: 0 10px;
+      border-radius: 10px;
+      background: var(--rose-bg);
+      border: 1px solid var(--rose-border);
+      color: #be123c;
+      font-size: 11px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      text-decoration: none;
+    }
+
+    .cat-prog-row {
+      margin-bottom: 10px;
+    }
+
+    .cat-prog-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .ai-box {
+      background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%);
+      border: 1px solid var(--blue-border);
+      border-radius: 16px;
+      padding: 15px;
+    }
+
+    /* ==========================================================================
+       6. タブ2: タスク（今日 / 1週間 / 1ヶ月 / 年間）
+       ========================================================================== */
+    .segmented-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
+      background: #e2e8f0;
+      padding: 4px;
+      border-radius: 14px;
+    }
+
+    .segmented-bar.two-cols {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .seg-btn {
+      min-height: 38px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--text-sub);
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .seg-btn.active {
+      background: var(--navy);
+      color: #ffffff;
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.16);
+    }
+
+    .horizon-summary-banner {
+      background: linear-gradient(135deg, var(--navy) 0%, #1e40af 100%);
+      color: #ffffff;
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .phase-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--navy);
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .phase-card.phase-1 { border-left-color: var(--blue); }
+    .phase-card.phase-2 { border-left-color: var(--purple); }
+    .phase-card.phase-3 { border-left-color: var(--amber); }
+    .phase-card.phase-4 { border-left-color: var(--rose); }
+
+    .btn-phase-add {
+      min-height: 34px;
+      padding: 0 11px;
+      border-radius: 10px;
+      background: var(--blue-bg);
+      border: 1px solid var(--blue-border);
+      color: var(--blue);
+      font-size: 11px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* ==========================================================================
+       7. タブ3: カレンダー（Calendar）
+       ========================================================================== */
+    .conflict-banner {
+      background: var(--rose-bg);
+      border: 1px solid var(--rose-border);
+      border-radius: 14px;
+      padding: 12px 14px;
+      color: #9f1239;
+      font-size: 12px;
+    }
+
+    .conflict-banner strong {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 3px;
+    }
+
+    .cal-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .cal-nav-btn {
+      min-height: 36px;
+      padding: 0 12px;
+      border-radius: 10px;
+      background: #f1f5f9;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .cal-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      text-align: center;
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--text-sub);
+      margin-bottom: 4px;
+    }
+
+    .cal-weekdays span:first-child { color: var(--rose); }
+    .cal-weekdays span:last-child { color: var(--blue); }
+
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+
+    .cal-cell {
+      min-height: 52px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #ffffff;
+      padding: 4px 2px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      transition: transform 0.1s, border-color 0.15s;
+    }
+
+    .cal-cell.empty {
+      background: transparent;
+      border-color: transparent;
+      pointer-events: none;
+    }
+
+    .cal-cell.heat-1 { background: #ecfdf5; border-color: #a7f3d0; }
+    .cal-cell.heat-2 { background: #d1fae5; border-color: #6ee7b7; }
+    .cal-cell.heat-3 { background: #a7f3d0; border-color: #34d399; }
+
+    .cal-cell.today { border: 2px solid var(--blue); }
+    .cal-cell.selected { box-shadow: 0 0 0 2px var(--navy); }
+    .cal-cell.conflict-day { border: 2px solid var(--rose); }
+
+    .cal-day-num {
+      font-size: 11px;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .cal-day-num.sun { color: var(--rose); }
+    .cal-day-num.sat { color: var(--blue); }
+
+    .cal-dots {
+      display: flex;
+      gap: 2px;
+      flex-wrap: wrap;
+      justify-content: center;
+      min-height: 8px;
+    }
+
+    .ev-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+
+    .ev-dot.exam1 { background: var(--rose); }
+    .ev-dot.kanchou { background: var(--purple); }
+    .ev-dot.interview { background: var(--amber); }
+    .ev-dot.briefing { background: var(--teal); }
+
+    .cal-hours-mini {
+      font-size: 9px;
+      font-weight: 800;
+      color: var(--emerald);
+      line-height: 1;
+    }
+
+    .ev-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .ev-badge.exam1 { background: var(--rose-bg); color: #be123c; border: 1px solid var(--rose-border); }
+    .ev-badge.kanchou { background: var(--purple-bg); color: #6d28d9; border: 1px solid var(--purple-border); }
+    .ev-badge.interview { background: var(--amber-bg); color: #b45309; border: 1px solid var(--amber-border); }
+    .ev-badge.briefing { background: var(--teal-bg); color: #0f766e; border: 1px solid var(--teal-border); }
+
+    .event-list-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+    }
+
+    .event-list-card.is-main {
+      border: 2px solid var(--gold);
+    }
+
+    /* ==========================================================================
+       8. タブ4: 科目・比較（Subjects & 9-Exam Comparison Matrix）
+       ========================================================================== */
+    .subj-box {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 14px;
+      border: 1px solid var(--border);
+    }
+
+    .subj-box.excluded {
+      opacity: 0.62;
+      background: #f8fafc;
+    }
+
+    .subj-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .subj-name {
+      margin: 4px 0 0;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .subj-box.excluded .subj-name {
+      text-decoration: line-through;
+      color: var(--text-sub);
+    }
+
+    .subj-note-line {
+      margin: 4px 0 0;
+      font-size: 11px;
+      color: var(--text-sub);
+    }
+
+    .toggle-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 36px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .toggle-wrap input {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-track {
+      width: 44px;
+      height: 24px;
+      background: #cbd5e1;
+      border-radius: 999px;
+      position: relative;
+      transition: background 0.2s;
+    }
+
+    .toggle-track::after {
+      content: "";
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #ffffff;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+      transition: transform 0.2s;
+    }
+
+    .toggle-wrap input:checked + .toggle-track {
+      background: var(--blue);
+    }
+
+    .toggle-wrap input:checked + .toggle-track::after {
+      transform: translateX(20px);
+    }
+
+    .toggle-text {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--text-sub);
+    }
+
+    .slider-panel {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin: 10px 0;
+    }
+
+    .slider-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .pct-badge {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--blue);
+    }
+
+    .pct-badge.high {
+      color: var(--emerald);
+    }
+
+    .fine-btns {
+      display: inline-flex;
+      gap: 6px;
+    }
+
+    .btn-fine {
+      min-width: 44px;
+      height: 30px;
+      border-radius: 8px;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    input[type="range"].custom-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 10px;
+      border-radius: 999px;
+      background: #e2e8f0;
+      outline: none;
+      margin: 4px 0;
+    }
+
+    input[type="range"].custom-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 4px solid var(--blue);
+      box-shadow: 0 2px 5px rgba(15, 23, 42, 0.25);
+    }
+
+    input[type="range"].custom-slider.high::-webkit-slider-thumb {
+      border-color: var(--emerald);
+    }
+
+    .subj-bottom-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .lap-stepper {
+      display: inline-flex;
+      align-items: center;
+      background: #f1f5f9;
+      border-radius: 10px;
+      padding: 2px;
+    }
+
+    .lap-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: #ffffff;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .lap-text {
+      padding: 0 8px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .btn-detail {
+      min-height: 36px;
+      padding: 0 10px;
+      border-radius: 10px;
+      background: #f1f5f9;
+      color: var(--text);
+      font-size: 11px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .col-chips-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .col-chip {
+      min-height: 36px;
+      padding: 4px 6px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: 800;
+      border: 1px solid #cbd5e1;
+      background: #f8fafc;
+      color: var(--text-sub);
+      text-align: center;
+    }
+
+    .col-chip.selected {
+      background: var(--navy);
+      color: #ffffff;
+      border-color: var(--navy);
+    }
+
+    .summary-navy-card {
+      background: linear-gradient(135deg, var(--navy) 0%, #1e3a8a 100%);
+      color: #ffffff;
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .summary-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .summary-tile {
+      background: rgba(255, 255, 255, 0.11);
+      border-radius: 12px;
+      padding: 10px;
+    }
+
+    .summary-tile span {
+      display: block;
+      font-size: 10px;
+      color: #bfdbfe;
+      font-weight: 700;
+    }
+
+    .summary-tile strong {
+      display: block;
+      font-size: 16px;
+      margin: 2px 0;
+      color: #fde047;
+    }
+
+    .summary-tile p {
+      margin: 0;
+      font-size: 10px;
+      color: #e2e8f0;
+      line-height: 1.4;
+    }
+
+    .table-scroller {
+      overflow-x: auto;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: #ffffff;
+    }
+
+    .comp-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    .comp-table th,
+    .comp-table td {
+      padding: 9px 8px;
+      border-bottom: 1px solid var(--border);
+      font-size: 11px;
+      vertical-align: middle;
+    }
+
+    .comp-table th {
+      background: var(--navy);
+      color: #ffffff;
+      text-align: center;
+      white-space: nowrap;
+      min-width: 82px;
+      font-weight: 800;
+    }
+
+    .comp-table th.sticky-first,
+    .comp-table td.sticky-first {
+      position: sticky;
+      left: 0;
+      z-index: 5;
+      text-align: left;
+      min-width: 148px;
+      max-width: 162px;
+      box-shadow: 3px 0 6px -2px rgba(15, 23, 42, 0.08);
+    }
+
+    .comp-table th.sticky-first {
+      background: var(--navy-dark);
+      z-index: 6;
+    }
+
+    .comp-table td.sticky-first {
+      background: #ffffff;
+    }
+
+    .cat-divider td {
+      background: #f1f5f9 !important;
+      font-weight: 800;
+      color: var(--text-sub);
+      padding: 6px 10px;
+      font-size: 10px;
+    }
+
+    .mark-badge {
+      display: inline-block;
+      padding: 3px 7px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .mark-must { background: var(--blue); color: #ffffff; }
+    .mark-opt { background: var(--emerald-bg); color: #065f46; border: 1px solid var(--emerald-border); }
+    .mark-part { background: var(--amber-bg); color: #92400e; border: 1px solid var(--amber-border); }
+    .mark-none { color: #cbd5e1; font-weight: 800; }
+
+    /* ==========================================================================
+       9. タブ5: 区分・設定（Presets & Backup）
+       ========================================================================== */
+    .track-card {
+      width: 100%;
+      text-align: left;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .track-card.selected {
+      background: var(--blue-bg);
+      border: 1.5px solid var(--blue);
+    }
+
+    /* ==========================================================================
+       10. ボトムナビゲーション（下部5タブ固定：ホーム・タスク・カレンダー・科目・比較・区分・設定）
+       ========================================================================== */
+    .bottom-bar {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 520px;
+      background: rgba(255, 255, 255, 0.98);
+      border-top: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      padding: 6px 0 max(8px, env(safe-area-inset-bottom));
+      z-index: 30;
+    }
+
+    .tab-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      min-height: 46px;
+      color: var(--text-muted);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+      position: relative;
+    }
+
+    .tab-btn.active {
+      color: var(--navy);
+      font-weight: 800;
+    }
+
+    .tab-btn.active svg {
+      stroke: var(--blue);
+    }
+
+    /* ==========================================================================
+       11. ボトムシートモーダル & トースト
+       ========================================================================== */
+    .sheet-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      z-index: 50;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .sheet-overlay.open {
+      display: flex;
+    }
+
+    .sheet-panel {
+      width: 100%;
+      max-width: 520px;
+      max-height: 88dvh;
+      background: #ffffff;
+      border-radius: 22px 22px 0 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      animation: sheetSlideUp 0.2s ease-out;
+    }
+
+    @keyframes sheetSlideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+
+    .sheet-header {
+      padding: 13px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .sheet-body {
+      padding: 16px;
+      overflow-y: auto;
+      padding-bottom: max(24px, env(safe-area-inset-bottom));
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .field-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 4px;
+      color: var(--text);
+    }
+
+    .subj-pick-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .subj-pick-chip {
+      min-height: 36px;
+      padding: 6px 11px;
+      border-radius: 10px;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--text);
+      text-align: left;
+    }
+
+    .subj-pick-chip.selected {
+      background: var(--navy);
+      border-color: var(--navy);
+      color: #ffffff;
+    }
+
+    .preset-row-btn {
+      width: 100%;
+      min-height: 44px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      background: #f8fafc;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      text-align: left;
+    }
+
+    .preset-row-btn.added {
+      background: var(--emerald-bg);
+      border-color: var(--emerald-border);
+      color: #065f46;
+    }
+
+    .toast-msg {
+      position: fixed;
+      top: 64px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--navy-dark);
+      color: #ffffff;
+      border: 1px solid rgba(250, 204, 21, 0.4);
+      padding: 10px 16px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      box-shadow: 0 6px 20px rgba(15, 23, 42, 0.28);
+      z-index: 60;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      max-width: 92%;
+      text-align: center;
+    }
+
+    .toast-msg.visible {
+      opacity: 1;
+    }
+
+    /* ==========================================================================
+       12. 自動バックアップ・履歴復元・クラウド同期UI
+       ========================================================================== */
+    .sync-badge-header {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 1px 8px;
+      border-radius: 999px;
+      background: rgba(16, 185, 129, 0.24);
+      border: 1px solid rgba(167, 243, 208, 0.38);
+      color: #d1fae5;
+      white-space: nowrap;
+      margin-left: 4px;
+      transition: transform 0.15s, background-color 0.2s;
+    }
+
+    .sync-badge-header.flash {
+      transform: scale(1.06);
+      background: rgba(16, 185, 129, 0.45);
+      color: #ffffff;
+    }
+
+    .auto-opt-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin-bottom: 10px;
+    }
+
+    .token-helper-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: 100%;
+      min-height: 40px;
+      padding: 8px 12px;
+      border-radius: 10px;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      color: var(--navy);
+      font-size: 12px;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .sync-badge-header.cloud-ok {
+      background: rgba(16, 185, 129, 0.25);
+      color: #a7f3d0;
+    }
+
+    .sync-badge-header.cloud-syncing {
+      background: rgba(250, 204, 21, 0.25);
+      color: #fef08a;
+    }
+
+    .sync-badge-header.cloud-err {
+      background: rgba(244, 63, 94, 0.28);
+      color: #fecdd3;
+    }
+
+    .history-row {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .history-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .btn-restore-snap {
+      min-height: 34px;
+      padding: 0 11px;
+      border-radius: 9px;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--navy);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .btn-restore-snap.confirm {
+      background: var(--rose);
+      border-color: var(--rose);
+      color: #ffffff;
+    }
+
+    .cloud-banner {
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1.5;
+      margin-bottom: 10px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      color: var(--text-sub);
+    }
+
+    .cloud-banner.ok {
+      background: var(--emerald-bg);
+      border-color: var(--emerald-border);
+      color: #065f46;
+    }
+
+    .cloud-banner.err {
+      background: var(--rose-bg);
+      border-color: var(--rose-border);
+      color: #9f1239;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- ==================== HEADER ==================== -->
+    <header class="app-header">
+      <div class="header-brand">
+        <div class="brand-icon" aria-hidden="true">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#facc15" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-6h6v6"/>
+          </svg>
+        </div>
+        <div style="min-width:0;">
+          <h1 class="app-title">公務員試験 学習＆日程ナビ</h1>
+          <div style="display:flex;align-items:center;gap:4px;min-width:0;">
+            <p id="header-tab-subtitle" class="app-sub" style="margin:0;">ホーム・学習サマリー</p>
+            <button type="button" id="header-auto-backup-badge" class="sync-badge-header" onclick="switchTab('settings')">自動保存済</button>
+          </div>
+        </div>
+      </div>
+      <button type="button" class="header-pill" onclick="switchTab('calendar')" title="カレンダーを開く">
+        <span class="gold-dot"></span>
+        <span id="header-main-countdown" class="header-pill-text num">本命: -- まであと --日</span>
+      </button>
+    </header>
+
+    <!-- ==================== MAIN CONTENT ==================== -->
+    <main class="app-main">
+      <!-- ==================== 1. ホーム (Home) ==================== -->
+      <section id="panel-home" class="tab-panel active">
+        <div id="home-hero" class="hero-card"></div>
+
+        <!-- 2x2 KPI Grid -->
+        <div class="kpi-grid">
+          <button type="button" class="kpi-box" onclick="openSubjectsSubTab('progress')">
+            <span class="kpi-label">対象科目 全体進捗率</span>
+            <div class="kpi-value-row">
+              <span id="kpi-progress" class="kpi-value accent num">0</span>
+              <span class="kpi-unit">%</span>
+            </div>
+            <div class="bar-track" style="margin-top:8px;">
+              <div id="kpi-progress-bar" class="bar-fill" style="width:0%;"></div>
+            </div>
+          </button>
+
+          <button type="button" class="kpi-box" onclick="switchTab('calendar')">
+            <span class="kpi-label">累計学習時間</span>
+            <div class="kpi-value-row">
+              <span id="kpi-hours" class="kpi-value num">0.0</span>
+              <span class="kpi-unit">h</span>
+            </div>
+            <p id="kpi-today-hours" class="kpi-foot num" style="color:var(--emerald);">今日 +0.0h 記録</p>
+          </button>
+
+          <button type="button" class="kpi-box" onclick="openTaskSubTab('daily')">
+            <span class="kpi-label">今日のタスク達成</span>
+            <div class="kpi-value-row">
+              <span id="kpi-tasks-done" class="kpi-value green num">0</span>
+              <span id="kpi-tasks-total" class="kpi-unit">/ 0科目</span>
+            </div>
+            <p class="kpi-foot" style="color:var(--blue);">タスクタブで管理 →</p>
+          </button>
+
+          <button type="button" class="kpi-box" onclick="switchTab('calendar')">
+            <span class="kpi-label">今後の試験・訪問・面接</span>
+            <div class="kpi-value-row">
+              <span id="kpi-events-count" class="kpi-value num">0</span>
+              <span class="kpi-unit">件</span>
+            </div>
+            <p class="kpi-foot" style="color:var(--purple);">カレンダー確認 →</p>
+          </button>
+        </div>
+
+        <!-- 優先対策 TOP3 -->
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <h2 class="card-title">優先対策 TOP3</h2>
+              <p class="card-desc">進捗が遅れている重要科目（+0.5hで今日のカレンダーログにも自動加算）</p>
+            </div>
+            <button type="button" onclick="openSubjectsSubTab('progress')" style="font-size:12px;font-weight:800;color:var(--blue);min-height:32px;">全科目 →</button>
+          </div>
+          <div id="home-priority-list"></div>
+        </div>
+
+        <!-- 今日のタスクプレビュー（科目名だけ＆進行度バーで直接操作可能） -->
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <h2 class="card-title">今日のタスク（科目別進行度）</h2>
+              <p id="home-today-date-label" class="card-desc">科目名ごとの進行度を直接更新できます</p>
+            </div>
+            <button type="button" onclick="openTaskSubTab('daily')" style="font-size:12px;font-weight:800;color:var(--blue);min-height:32px;">タスク一覧 →</button>
+          </div>
+          <div id="home-today-tasks"></div>
+        </div>
+
+        <!-- カテゴリー別進捗バー -->
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <h2 class="card-title">カテゴリー別 進捗サマリー</h2>
+              <p class="card-desc">受験対象にしている科目のカテゴリー平均</p>
+            </div>
+          </div>
+          <div id="home-category-bars"></div>
+        </div>
+
+        <!-- AI戦略プロンプト生成 -->
+        <div class="ai-box">
+          <h2 class="card-title" style="color:var(--navy);">今週のAI学習戦略プロンプトをコピー</h2>
+          <p class="card-desc" style="margin-bottom:12px;">
+            本命までの残り日数・全対象科目の進捗率・学習時間・今後の予定・科目別タスク進行度を自動整形してコピーします。
+          </p>
+          <button type="button" class="btn-cta" onclick="copyAiStrategyPrompt()">
+            今週のAI戦略プロンプトをコピー
+          </button>
+        </div>
+      </section>
+
+      <!-- ==================== 2. タスク (今日 / 1週間 / 1ヶ月 / 年間 - 科目名のみ) ==================== -->
+      <section id="panel-tasks" class="tab-panel">
+        <div class="segmented-bar" role="tablist" aria-label="タスクの期間切替">
+          <button type="button" class="seg-btn active" id="seg-daily" onclick="setTaskHorizon('daily')">今日</button>
+          <button type="button" class="seg-btn" id="seg-weekly" onclick="setTaskHorizon('weekly')">1週間</button>
+          <button type="button" class="seg-btn" id="seg-monthly" onclick="setTaskHorizon('monthly')">1ヶ月</button>
+          <button type="button" class="seg-btn" id="seg-yearly" onclick="setTaskHorizon('yearly')">年間</button>
+        </div>
+
+        <div id="tasks-horizon-container" style="display:flex;flex-direction:column;gap:12px;"></div>
+      </section>
+
+      <!-- ==================== 3. カレンダー (1次試験・官庁訪問・2次面接・説明会・学習ログ) ==================== -->
+      <section id="panel-calendar" class="tab-panel">
+        <div id="calendar-conflict-banner" class="conflict-banner" style="display:none;"></div>
+
+        <div class="card" style="padding:12px;">
+          <div class="cal-nav">
+            <button type="button" class="cal-nav-btn" onclick="shiftCalendarMonth(-1)">◀ 前月</button>
+            <div style="text-align:center;">
+              <strong id="cal-month-title" class="num" style="font-size:15px;">2026年 11月</strong>
+              <button type="button" onclick="jumpCalendarToday()" style="display:block;margin:1px auto 0;font-size:10px;font-weight:800;color:var(--blue);">今月・今日に戻る</button>
+            </div>
+            <button type="button" class="cal-nav-btn" onclick="shiftCalendarMonth(1)">次月 ▶</button>
+          </div>
+
+          <div class="cal-weekdays">
+            <span>日</span><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span>土</span>
+          </div>
+          <div id="cal-days-grid" class="cal-grid"></div>
+
+          <!-- 凡例 -->
+          <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:10px;padding-top:8px;border-top:1px solid var(--border);font-size:10px;font-weight:800;color:var(--text-sub);">
+            <span style="display:inline-flex;align-items:center;gap:3px;"><span class="ev-dot exam1"></span>1次試験</span>
+            <span style="display:inline-flex;align-items:center;gap:3px;"><span class="ev-dot kanchou"></span>官庁訪問</span>
+            <span style="display:inline-flex;align-items:center;gap:3px;"><span class="ev-dot interview"></span>2次・最終面接</span>
+            <span style="display:inline-flex;align-items:center;gap:3px;"><span class="ev-dot briefing"></span>説明会・予約</span>
+            <span style="display:inline-flex;align-items:center;gap:3px;"><span style="width:10px;height:10px;border-radius:3px;background:#a7f3d0;display:inline-block;"></span>学習ログ</span>
+          </div>
+        </div>
+
+        <button type="button" class="btn-cta" onclick="openAddEventSheet()">
+          + 試験・官庁訪問・面接を追加（2027プリセット対応）
+        </button>
+
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <h2 class="card-title">登録済みの試験・官庁訪問・面接一覧</h2>
+              <p class="card-desc">日付タップでその日の予定・科目別タスク・学習時間を編集できます</p>
+            </div>
+          </div>
+          <div id="calendar-upcoming-list"></div>
+        </div>
+      </section>
+
+      <!-- ==================== 4. 科目・比較 (科目別進捗 & 試験別 科目比較表) ==================== -->
+      <section id="panel-subjects_matrix" class="tab-panel">
+        <div class="segmented-bar two-cols" role="tablist" aria-label="科目・比較の切替">
+          <button type="button" class="seg-btn active" id="seg-sub-progress" onclick="setSubjectsViewMode('progress')">科目別進捗（全26科目）</button>
+          <button type="button" class="seg-btn" id="seg-sub-matrix" onclick="setSubjectsViewMode('matrix')">試験別 科目比較表（9区分）</button>
+        </div>
+
+        <!-- 4A. 科目別進捗ビュー -->
+        <div id="view-subject-progress" style="display:flex;flex-direction:column;gap:12px;">
+          <div class="card" style="padding:12px;">
+            <div id="subject-category-chips" class="h-scroll"></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);">
+              <span id="subject-count-summary" style="font-size:11px;font-weight:800;color:var(--text-sub);">受験対象: 0科目</span>
+              <div style="display:inline-flex;background:#f1f5f9;padding:3px;border-radius:10px;">
+                <button type="button" id="filter-active-only" onclick="setSubjectScope('active')" style="padding:4px 10px;border-radius:8px;font-size:11px;font-weight:800;">対象科目のみ</button>
+                <button type="button" id="filter-all-subs" onclick="setSubjectScope('all')" style="padding:4px 10px;border-radius:8px;font-size:11px;font-weight:800;">全科目</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="subject-cards-list" style="display:flex;flex-direction:column;gap:10px;"></div>
+        </div>
+
+        <!-- 4B. 試験別 科目比較表ビュー -->
+        <div id="view-subject-matrix" style="display:none;flex-direction:column;gap:12px;">
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h2 class="card-title">試験別 科目比較マトリクス（全9試験）</h2>
+                <p class="card-desc">併願プリセットや試験列を選ぶと共通必須・独自科目を自動診断</p>
+              </div>
+            </div>
+            <div id="matrix-preset-chips" class="h-scroll"></div>
+            <div id="matrix-col-toggles" class="col-chips-grid"></div>
+          </div>
+
+          <div id="matrix-summary-card" class="summary-navy-card"></div>
+
+          <div class="card" style="padding:10px 12px;">
+            <div style="display:flex;gap:8px;flex-wrap:wrap;font-size:10px;font-weight:800;color:var(--text-sub);margin-bottom:8px;">
+              <span><span class="mark-badge mark-must">◎</span> 必須・中核</span>
+              <span><span class="mark-badge mark-opt">○</span> 選択科目</span>
+              <span><span class="mark-badge mark-part">△</span> 記述・一部</span>
+              <span><span class="mark-badge mark-none">－</span> 出題なし</span>
+            </div>
+            <div class="table-scroller">
+              <table class="comp-table">
+                <thead id="matrix-thead"></thead>
+                <tbody id="matrix-tbody"></tbody>
+              </table>
+            </div>
+            <p style="margin:8px 0 0;font-size:10px;color:var(--text-sub);text-align:right;">
+              ※科目行タップで進捗・メモ・YouTube講義を編集できます
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== 5. 区分・設定 (Auto-Backup & Templates) ==================== -->
+      <section id="panel-settings" class="tab-panel">
+        <!-- 1. 自動保存・自動バックアップ状態 & 自動ファイル保存オプション -->
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <h2 class="card-title">自動保存・自動バックアップ設定</h2>
+              <p id="autosave-live-summary" class="card-desc">操作するたびに端末内（2重保存）へ自動記録中</p>
+            </div>
+          </div>
+
+          <div class="auto-opt-row">
+            <div style="min-width:0;flex:1;">
+              <div style="font-size:12px;font-weight:800;color:var(--text);">1日1回・操作時に自動でJSONファイルを保存</div>
+              <div style="font-size:10px;color:var(--text-sub);margin-top:2px;line-height:1.4;">ONにすると、その日最初に学習記録を更新した瞬間にバックアップファイルも自動保存します</div>
+            </div>
+            <label class="toggle-wrap" aria-label="1日1回自動ファイル保存の切替">
+              <input type="checkbox" id="toggle-auto-file-dl" onchange="toggleAutoFileDownload(this.checked)" />
+              <span class="toggle-track"></span>
+              <span id="auto-file-dl-label" class="toggle-text">OFF</span>
+            </label>
+          </div>
+
+          <div id="auto-snapshot-list"></div>
+        </div>
+
+        <!-- 2. GitHub Gist クラウド自動同期（1タップトークン発行リンク付き） -->
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <h2 class="card-title">GitHub Gist クラウド完全自動バックアップ</h2>
+              <p class="card-desc">1度設定すると変更の2秒後に非公開Gistへ自動保存。Safari履歴消去後も自動復元できます</p>
+            </div>
+          </div>
+
+          <div id="gist-status-banner" class="cloud-banner">
+            未連携（設定するとクラウドにも毎回自動バックアップされます）
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <a
+              href="https://github.com/settings/tokens/new?scopes=gist&description=koumuin-navi-auto-backup"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="token-helper-link"
+            >
+              1. GitHubで専用トークンを発行する（gist権限自動選択） ↗
+            </a>
+
+            <div>
+              <label class="field-label" for="gist-token-input">2. 発行したトークンを貼り付け</label>
+              <input type="text" id="gist-token-input" placeholder="ghp_xxxxxxxxxxxx または github_pat_xxxx" autocomplete="off" autocapitalize="off" spellcheck="false" />
+            </div>
+            <div>
+              <label class="field-label" for="gist-id-input">Gist ID（初回は空欄のままOK・自動作成）</label>
+              <input type="text" id="gist-id-input" placeholder="空欄のまま下のボタンを押すと非公開Gistを自動作成します" autocomplete="off" autocapitalize="off" spellcheck="false" />
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:2px;">
+              <button type="button" id="btn-gist-sync" class="btn-cta" onclick="saveAndSyncGist()">
+                保存して自動同期ON
+              </button>
+              <button type="button" id="btn-gist-restore" class="btn-navy" onclick="restoreFromGist()">
+                クラウドから復元
+              </button>
+            </div>
+            <div id="gist-unlink-wrap" style="display:none;">
+              <button type="button" class="btn-outline" style="color:var(--text-sub);" onclick="unlinkGist()">
+                クラウド自動同期を解除する
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. 志望区分テンプレート一括切替 -->
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <h2 class="card-title">志望区分テンプレート一括切替</h2>
+              <p class="card-desc">既存の進捗率・学習時間・メモ・動画URLを保持したまま受験対象科目を一括切替</p>
+            </div>
+          </div>
+          <div id="settings-track-list"></div>
+        </div>
+
+        <!-- 4. 手動JSONバックアップ・復元・初期化 -->
+        <div class="card">
+          <h2 class="card-title" style="margin-bottom:4px;">手動JSONバックアップ・復元・初期化</h2>
+          <p class="card-desc" style="margin-bottom:12px;">学習データのJSONコピー・書き出し・復元、または初期デモデータへのリセット</p>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+            <button type="button" class="btn-cta" onclick="exportJsonCopy()">
+              JSONをコピー
+            </button>
+            <button type="button" class="btn-navy" onclick="downloadJsonFile()">
+              JSON書き出し
+            </button>
+          </div>
+
+          <label class="field-label" for="backup-json-textarea">JSONデータ（書き出し表示 / 貼り付けて復元）</label>
+          <textarea id="backup-json-textarea" rows="4" placeholder="ここにバックアップJSONが表示されます。復元する際はJSONを貼り付けて下の「JSONから復元」を押してください。"></textarea>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
+            <button type="button" class="btn-outline" onclick="importJsonBackup()">
+              JSONから復元
+            </button>
+            <button type="button" id="btn-reset-demo" class="btn-outline" style="color:var(--rose);border-color:var(--rose-border);" onclick="handleResetClick()">
+              初期データに戻す
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ==================== FIXED 5-TAB BOTTOM NAVIGATION ==================== -->
+    <nav class="bottom-bar" aria-label="メインナビゲーション">
+      <button type="button" class="tab-btn active" id="nav-home" onclick="switchTab('home')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V9.5z"/>
+        </svg>
+        <span>ホーム</span>
+      </button>
+
+      <button type="button" class="tab-btn" id="nav-tasks" onclick="switchTab('tasks')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+        </svg>
+        <span>タスク</span>
+      </button>
+
+      <button type="button" class="tab-btn" id="nav-calendar" onclick="switchTab('calendar')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+        </svg>
+        <span>カレンダー</span>
+      </button>
+
+      <button type="button" class="tab-btn" id="nav-subjects_matrix" onclick="switchTab('subjects_matrix')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+        </svg>
+        <span>科目・比較</span>
+      </button>
+
+      <button type="button" class="tab-btn" id="nav-settings" onclick="switchTab('settings')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/>
+        </svg>
+        <span>区分・設定</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- ==================== SHEET 1: 科目別タスク追加モーダル（文字入力なし・科目選択のみ） ==================== -->
+  <div id="sheet-add-task" class="sheet-overlay" onclick="if(event.target===this) closeSheet('sheet-add-task')">
+    <div class="sheet-panel">
+      <div class="sheet-header">
+        <strong id="add-task-sheet-title" style="font-size:15px;">科目を追加</strong>
+        <button type="button" onclick="closeSheet('sheet-add-task')" style="font-size:18px;padding:4px 8px;">✕</button>
+      </div>
+      <div id="add-task-sheet-body" class="sheet-body"></div>
+    </div>
+  </div>
+
+  <!-- ==================== SHEET 2: カレンダー日付詳細モーダル ==================== -->
+  <div id="sheet-date-detail" class="sheet-overlay" onclick="if(event.target===this) closeSheet('sheet-date-detail')">
+    <div class="sheet-panel">
+      <div class="sheet-header">
+        <strong id="date-sheet-title" class="num" style="font-size:15px;">2026/11/27 の詳細</strong>
+        <button type="button" onclick="closeSheet('sheet-date-detail')" style="font-size:18px;padding:4px 8px;">✕</button>
+      </div>
+      <div id="date-sheet-body" class="sheet-body"></div>
+    </div>
+  </div>
+
+  <!-- ==================== SHEET 3: 試験・官庁訪問・面接を追加 ==================== -->
+  <div id="sheet-add-event" class="sheet-overlay" onclick="if(event.target===this) closeSheet('sheet-add-event')">
+    <div class="sheet-panel">
+      <div class="sheet-header">
+        <strong style="font-size:15px;">試験・官庁訪問・面接を追加</strong>
+        <button type="button" onclick="closeSheet('sheet-add-event')" style="font-size:18px;padding:4px 8px;">✕</button>
+      </div>
+      <div class="sheet-body">
+        <form onsubmit="submitEventForm(event)" style="display:flex;flex-direction:column;gap:10px;">
+          <div>
+            <label class="field-label" for="ev-type-select">予定の種別 *</label>
+            <select id="ev-type-select">
+              <option value="exam1">1次試験（筆記）</option>
+              <option value="kanchou">官庁訪問（第1クール・第2クール等）</option>
+              <option value="interview">2次・最終面接</option>
+              <option value="briefing">説明会・予約開始日</option>
+            </select>
+          </div>
+          <div>
+            <label class="field-label" for="ev-title-input">試験名・省庁名・自治体名 *</label>
+            <input type="text" id="ev-title-input" required placeholder="例：〇〇省 官庁訪問 第1クール / 国税専門官 2次面接" />
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div>
+              <label class="field-label" for="ev-date-input">日付 *</label>
+              <input type="date" id="ev-date-input" required />
+            </div>
+            <div>
+              <label class="field-label" for="ev-time-input">集合時間・枠（任意）</label>
+              <input type="text" id="ev-time-input" placeholder="例：09:30集合 / 午前枠" />
+            </div>
+          </div>
+          <div>
+            <label class="field-label" for="ev-location-input">会場・場所（任意）</label>
+            <input type="text" id="ev-location-input" placeholder="例：霞が関本省庁舎 / 〇〇合同庁舎" />
+          </div>
+          <div>
+            <label class="field-label" for="ev-note-input">持ち物・チェックリスト・メモ（任意）</label>
+            <input type="text" id="ev-note-input" placeholder="例：訪問カード3部・受験票・志望動機確認" />
+          </div>
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;cursor:pointer;">
+            <input type="checkbox" id="ev-main-checkbox" style="width:18px;height:18px;accent-color:var(--gold);" />
+            <span>この日程をホーム画面の「本命カウントダウン」に設定する</span>
+          </label>
+          <button type="submit" class="btn-cta">カレンダーに登録する</button>
+        </form>
+
+        <div style="border-top:1px solid var(--border);padding-top:14px;">
+          <span class="field-label">2027年度 主要試験・官庁訪問プリセット（ワンタップ追加）</span>
+          <div id="preset-exam-buttons" style="display:flex;flex-direction:column;gap:8px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SHEET 4: 科目詳細・論点別YouTube講義リンク ==================== -->
+  <div id="sheet-subject-detail" class="sheet-overlay" onclick="if(event.target===this) closeSheet('sheet-subject-detail')">
+    <div class="sheet-panel">
+      <div class="sheet-header">
+        <strong id="detail-sheet-title" style="font-size:15px;">詳細・講義メモ</strong>
+        <button type="button" onclick="closeSheet('sheet-subject-detail')" style="font-size:18px;padding:4px 8px;">✕</button>
+      </div>
+      <div class="sheet-body">
+        <input type="hidden" id="detail-subject-id" />
+        <div>
+          <label class="field-label" for="detail-note-input">学習メモ・使用教材・苦手論点</label>
+          <textarea id="detail-note-input" rows="3" placeholder="例：スー過去7 2周目 / 正答率75% / 速さと場合の数に集中"></textarea>
+          <button type="button" class="btn-cta" style="margin-top:8px;" onclick="saveSubjectNote()">メモを保存する</button>
+        </div>
+
+        <div style="border-top:1px solid var(--border);padding-top:12px;">
+          <span class="field-label">登録済み 論点別 YouTube講義リンク</span>
+          <div id="detail-links-container" style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px;"></div>
+
+          <div style="background:#f8fafc;border:1px solid var(--border);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px;">
+            <span style="font-size:12px;font-weight:800;">+ YouTube講義リンクを追加</span>
+            <input type="text" id="new-link-title" placeholder="論点タイトル（例：判断推理・命題と対偶）" />
+            <input type="url" id="new-link-url" placeholder="https://www.youtube.com/..." />
+            <button type="button" class="btn-outline" style="background:var(--rose-bg);color:#be123c;border-color:var(--rose-border);" onclick="addSubjectVideoLink()">
+              リンクを追加する
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SHEET 5: 手動コピーフォールバック ==================== -->
+  <div id="sheet-manual-copy" class="sheet-overlay" onclick="if(event.target===this) closeSheet('sheet-manual-copy')">
+    <div class="sheet-panel">
+      <div class="sheet-header">
+        <strong style="font-size:15px;">テキストを選択してコピー</strong>
+        <button type="button" onclick="closeSheet('sheet-manual-copy')" style="font-size:18px;padding:4px 8px;">✕</button>
+      </div>
+      <div class="sheet-body">
+        <p style="margin:0;font-size:12px;color:var(--text-sub);">下の枠内を長押しして「すべて選択 → コピー」してください。</p>
+        <textarea id="manual-copy-area" rows="7" readonly></textarea>
+        <button type="button" class="btn-cta" onclick="closeSheet('sheet-manual-copy')">閉じる</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-banner" class="toast-msg" role="status" aria-live="polite"></div>
+
+  <script>
+    /* ==========================================================================
+       1. ストレージ＆日時ヘルパー
+       ========================================================================== */
+    const STORAGE_KEY = 'koumuin_exam_navi_v7_clean_9exams';
+    const STORAGE_KEY_SNAPSHOTS = 'koumuin_exam_navi_v7_snapshots';
+    const STORAGE_KEY_GIST = 'koumuin_exam_navi_v7_gist_cfg';
+    const STORAGE_KEY_AUTOFILE = 'koumuin_exam_navi_v7_autofile_cfg';
+    const IDB_NAME = 'koumuin_exam_navi_idb_v1';
+    const IDB_STORE = 'kv_store';
+
+    const storage = (() => {
+      const mem = {};
+      return {
+        get(k) {
+          try { return window.localStorage.getItem(k); } catch (e) { return mem[k] || null; }
+        },
+        set(k, v) {
+          try { window.localStorage.setItem(k, v); } catch (e) { mem[k] = v; }
+        }
+      };
+    })();
+
+    function getLocalDateStr(d = new Date()) {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    }
+
+    function addDaysToStr(dateStr, offsetDays) {
+      const [y, m, d] = dateStr.split('-').map(Number);
+      const dt = new Date(y, m - 1, d + offsetDays);
+      return getLocalDateStr(dt);
+    }
+
+    function calcDaysUntil(dateStr) {
+      if (!dateStr) return null;
+      const [y, m, d] = dateStr.split('-').map(Number);
+      if (!y || !m || !d) return null;
+      const target = new Date(y, m - 1, d);
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      return Math.round((target - today) / (1000 * 60 * 60 * 24));
+    }
+
+    function formatJapaneseDate(dateStr) {
+      if (!dateStr) return '未設定';
+      const [y, m, d] = dateStr.split('-').map(Number);
+      if (!y || !m || !d) return dateStr;
+      const dt = new Date(y, m - 1, d);
+      const w = ['日', '月', '火', '水', '木', '金', '土'][dt.getDay()];
+      return `${y}/${String(m).padStart(2, '0')}/${String(d).padStart(2, '0')} (${w})`;
+    }
+
+    function formatShortMonthDay(dateStr) {
+      const [, m, d] = dateStr.split('-').map(Number);
+      return `${m}/${d}`;
+    }
+
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    /* ==========================================================================
+       2. マスターデータ（6カテゴリー・試験プリセット・全9試験比較表・4テンプレート）
+       ========================================================================== */
+    const CATEGORIES = [
+      '教養知能',
+      '教養知識',
+      '法律系専門',
+      '経済・商学系専門',
+      '学系・人間科学系専門',
+      '記述・論文・面接'
+    ];
+
+    const EVENT_TYPE_META = {
+      exam1: { label: '1次試験', dotClass: 'exam1', badgeClass: 'exam1' },
+      kanchou: { label: '官庁訪問', dotClass: 'kanchou', badgeClass: 'kanchou' },
+      interview: { label: '2次・最終面接', dotClass: 'interview', badgeClass: 'interview' },
+      briefing: { label: '説明会・予約開始', dotClass: 'briefing', badgeClass: 'briefing' }
+    };
+
+    // 2027年度 主要試験・官庁訪問プリセット（教職なし）
+    const EXAM_PRESETS_2027 = [
+      { type: 'exam1', title: '国家総合職（1次試験）', match: '国家総合職', date: '2027-04-11', location: '全国試験会場', note: '基礎能力・専門・政策論文/専門記述' },
+      { type: 'exam1', title: '特別区Ⅰ類（1次試験）', match: '特別区Ⅰ類', date: '2027-04-25', location: '都内会場', note: '教養・専門択一・論文' },
+      { type: 'exam1', title: '東京都Ⅰ類B（1次試験）', match: '東京都Ⅰ類B', date: '2027-04-25', location: '都内会場', note: '教養択一・専門記述（一般方式）' },
+      { type: 'exam1', title: '国税専門官（A区分・1次試験）', match: '国税専門官', date: '2027-04-25', location: '各国税局管内会場', note: '基礎能力・専門択一・専門記述' },
+      { type: 'exam1', title: '財務専門官（1次試験）', match: '財務専門官', date: '2027-04-25', location: '各財務局管内会場', note: '基礎能力・専門択一・専門記述' },
+      { type: 'exam1', title: '労働基準監督官（A・1次試験）', match: '労働基準監督官', date: '2027-04-25', location: '各労働局管内会場', note: '労働法・労働事情必須＋専門記述' },
+      { type: 'exam1', title: '法務省専門職員（人間科学・1次試験）', match: '法務省専門職員', date: '2027-04-25', location: '全国会場', note: '心理学・教育学・福祉・社会学選択' },
+      { type: 'exam1', title: '国家一般職（1次試験）', match: '国家一般職', date: '2027-05-02', location: '全国会場', note: '基礎能力・専門択一・一般論文' },
+      { type: 'exam1', title: '警視庁・道府県警察官（第1回1次）', match: '警察官', date: '2027-05-09', location: '各都道府県会場', note: '教養試験・論作文・国語/漢字' },
+      { type: 'exam1', title: '東京消防庁・消防官（第1回1次）', match: '消防官', date: '2027-05-10', location: '都内・各自治体会場', note: '教養試験・論作文' },
+      { type: 'briefing', title: '国家一般職 官庁訪問 予約開始', match: '官庁訪問 予約開始', date: '2027-05-26', location: '各府省庁採用HP', note: '志望府省庁の予約フォーム受付開始' },
+      { type: 'kanchou', title: '官庁訪問 第1クール（初日）', match: '官庁訪問 第1クール', date: '2027-06-02', location: '霞が関 本省庁舎', note: '訪問カード・志望動機・政策課題整理' },
+      { type: 'exam1', title: '地方上級（県庁・政令市 1次試験）', match: '地方上級', date: '2027-06-20', location: '各都道府県庁・政令市', note: '教養・専門択一・論文' },
+      { type: 'exam1', title: '市役所A日程（1次試験）', match: '市役所', date: '2027-06-20', location: '各市役所会場', note: '教養のみ or SPI方式' }
+    ];
+
+    // 全9試験区分比較マトリクス定義
+    const MATRIX_COLUMNS = [
+      { id: 'sougou', label: '国家総合職' },
+      { id: 'ippan', label: '国家一般職' },
+      { id: 'kokuzei', label: '国税専門官' },
+      { id: 'zaimu', label: '財務専門官' },
+      { id: 'rouki', label: '労基・法務' },
+      { id: 'chiho', label: '地方上級' },
+      { id: 'tokubetsu', label: '特別区Ⅰ類' },
+      { id: 'tokyo', label: '東京都Ⅰ類B' },
+      { id: 'police_fire', label: '警察・消防' }
+    ];
+
+    // 全26科目の9試験区分出題マトリクス ('must': ◎, 'opt': ○, 'part': △, 'none': －)
+    const SUBJECT_MATRIX_MAP = {
+      // 教養知能 (6)
+      '数的推理': { sougou: 'must', ippan: 'must', kokuzei: 'must', zaimu: 'must', rouki: 'must', chiho: 'must', tokubetsu: 'must', tokyo: 'must', police_fire: 'must' },
+      '判断推理': { sougou: 'must', ippan: 'must', kokuzei: 'must', zaimu: 'must', rouki: 'must', chiho: 'must', tokubetsu: 'must', tokyo: 'must', police_fire: 'must' },
+      '資料解釈': { sougou: 'must', ippan: 'must', kokuzei: 'must', zaimu: 'must', rouki: 'must', chiho: 'must', tokubetsu: 'must', tokyo: 'must', police_fire: 'must' },
+      '文章理解（現代文）': { sougou: 'must', ippan: 'must', kokuzei: 'must', zaimu: 'must', rouki: 'must', chiho: 'must', tokubetsu: 'must', tokyo: 'must', police_fire: 'must' },
+      '文章理解（英文）': { sougou: 'must', ippan: 'must', kokuzei: 'must', zaimu: 'must', rouki: 'must', chiho: 'must', tokubetsu: 'must', tokyo: 'must', police_fire: 'part' },
+      'SPI（言語・非言語・性格）': { sougou: 'none', ippan: 'none', kokuzei: 'none', zaimu: 'none', rouki: 'none', chiho: 'part', tokubetsu: 'none', tokyo: 'part', police_fire: 'part' },
+
+      // 教養知識 (3)
+      '社会科学・時事': { sougou: 'must', ippan: 'must', kokuzei: 'must', zaimu: 'must', rouki: 'must', chiho: 'must', tokubetsu: 'must', tokyo: 'must', police_fire: 'must' },
+      '人文科学（日本史・世界史・地理・思想）': { sougou: 'opt', ippan: 'opt', kokuzei: 'opt', zaimu: 'opt', rouki: 'opt', chiho: 'must', tokubetsu: 'opt', tokyo: 'opt', police_fire: 'must' },
+      '自然科学（数学・物理・化学・生物・地学）': { sougou: 'opt', ippan: 'opt', kokuzei: 'opt', zaimu: 'opt', rouki: 'opt', chiho: 'must', tokubetsu: 'opt', tokyo: 'opt', police_fire: 'must' },
+
+      // 法律系専門 (5)
+      '憲法': { sougou: 'opt', ippan: 'opt', kokuzei: 'must', zaimu: 'must', rouki: 'opt', chiho: 'must', tokubetsu: 'opt', tokyo: 'part', police_fire: 'none' },
+      '民法': { sougou: 'opt', ippan: 'opt', kokuzei: 'must', zaimu: 'must', rouki: 'opt', chiho: 'must', tokubetsu: 'opt', tokyo: 'part', police_fire: 'none' },
+      '行政法': { sougou: 'opt', ippan: 'opt', kokuzei: 'must', zaimu: 'must', rouki: 'opt', chiho: 'must', tokubetsu: 'opt', tokyo: 'part', police_fire: 'none' },
+      '商法・会社法': { sougou: 'opt', ippan: 'none', kokuzei: 'opt', zaimu: 'opt', rouki: 'opt', chiho: 'opt', tokubetsu: 'opt', tokyo: 'none', police_fire: 'none' },
+      '労働法・労働事情': { sougou: 'opt', ippan: 'none', kokuzei: 'none', zaimu: 'none', rouki: 'must', chiho: 'opt', tokubetsu: 'opt', tokyo: 'none', police_fire: 'none' },
+
+      // 経済・商学系専門 (5)
+      'ミクロ経済学': { sougou: 'opt', ippan: 'opt', kokuzei: 'must', zaimu: 'must', rouki: 'opt', chiho: 'must', tokubetsu: 'opt', tokyo: 'part', police_fire: 'none' },
+      'マクロ経済学': { sougou: 'opt', ippan: 'opt', kokuzei: 'must', zaimu: 'must', rouki: 'opt', chiho: 'must', tokubetsu: 'opt', tokyo: 'part', police_fire: 'none' },
+      '財政学': { sougou: 'opt', ippan: 'opt', kokuzei: 'opt', zaimu: 'must', rouki: 'opt', chiho: 'must', tokubetsu: 'opt', tokyo: 'part', police_fire: 'none' },
+      '経営学': { sougou: 'none', ippan: 'opt', kokuzei: 'opt', zaimu: 'opt', rouki: 'opt', chiho: 'opt', tokubetsu: 'opt', tokyo: 'part', police_fire: 'none' },
+      '会計学': { sougou: 'none', ippan: 'none', kokuzei: 'must', zaimu: 'must', rouki: 'none', chiho: 'none', tokubetsu: 'opt', tokyo: 'part', police_fire: 'none' },
+
+      // 学系・人間科学系専門 (4)
+      '政治学': { sougou: 'opt', ippan: 'opt', kokuzei: 'none', zaimu: 'opt', rouki: 'none', chiho: 'must', tokubetsu: 'opt', tokyo: 'part', police_fire: 'none' },
+      '行政学': { sougou: 'opt', ippan: 'opt', kokuzei: 'none', zaimu: 'opt', rouki: 'none', chiho: 'must', tokubetsu: 'opt', tokyo: 'part', police_fire: 'none' },
+      '社会学・国際関係': { sougou: 'opt', ippan: 'opt', kokuzei: 'opt', zaimu: 'opt', rouki: 'opt', chiho: 'part', tokubetsu: 'opt', tokyo: 'part', police_fire: 'none' },
+      '心理学・教育学・福祉': { sougou: 'opt', ippan: 'opt', kokuzei: 'none', zaimu: 'none', rouki: 'must', chiho: 'none', tokubetsu: 'none', tokyo: 'none', police_fire: 'none' },
+
+      // 記述・論文・面接 (3)
+      '教養論文・作文': { sougou: 'part', ippan: 'must', kokuzei: 'none', zaimu: 'none', rouki: 'none', chiho: 'must', tokubetsu: 'must', tokyo: 'must', police_fire: 'must' },
+      '専門記述': { sougou: 'must', ippan: 'none', kokuzei: 'must', zaimu: 'must', rouki: 'must', chiho: 'none', tokubetsu: 'none', tokyo: 'must', police_fire: 'none' },
+      '面接・官庁訪問対策': { sougou: 'must', ippan: 'must', kokuzei: 'must', zaimu: 'must', rouki: 'must', chiho: 'must', tokubetsu: 'must', tokyo: 'must', police_fire: 'must' }
+    };
+
+    // 4つの志望区分テンプレート
+    const TRACK_TEMPLATES = [
+      {
+        id: 'ippan_koku_zaimu',
+        name: '国家一般職・国税・財務 併願型（11月開始モデル）',
+        desc: '数的処理・文章理解・憲法・民法・行政法・ミクロ/マクロ経済学＋会計学・財政学・政治行政・専門記述・論文まで網羅',
+        activeSubjects: [
+          '数的推理', '判断推理', '資料解釈', '文章理解（現代文）', '文章理解（英文）',
+          '社会科学・時事',
+          '憲法', '民法', '行政法',
+          'ミクロ経済学', 'マクロ経済学', '財政学', '会計学',
+          '政治学', '行政学',
+          '教養論文・作文', '専門記述', '面接・官庁訪問対策'
+        ]
+      },
+      {
+        id: 'sougou_kanchou',
+        name: '国家総合職・官庁訪問重視型',
+        desc: '総合職（法律・経済・政治国際）と国家専門職併願を想定し、政策論文・専門記述・官庁訪問対策を軸に構成',
+        activeSubjects: [
+          '数的推理', '判断推理', '資料解釈', '文章理解（現代文）', '文章理解（英文）',
+          '社会科学・時事',
+          '憲法', '民法', '行政法', '商法・会社法', '労働法・労働事情',
+          'ミクロ経済学', 'マクロ経済学', '財政学',
+          '政治学', '行政学', '社会学・国際関係',
+          '教養論文・作文', '専門記述', '面接・官庁訪問対策'
+        ]
+      },
+      {
+        id: 'chiho_tokubetsu_tokyo',
+        name: '地方上級・特別区・都庁 行政併願型',
+        desc: '教養全科目（社会・人文・自然）と主要専門択一・教養論文・都庁専門記述をバランスよく完成',
+        activeSubjects: [
+          '数的推理', '判断推理', '資料解釈', '文章理解（現代文）', '文章理解（英文）',
+          '社会科学・時事', '人文科学（日本史・世界史・地理・思想）', '自然科学（数学・物理・化学・生物・地学）',
+          '憲法', '民法', '行政法',
+          'ミクロ経済学', 'マクロ経済学', '財政学', '経営学',
+          '政治学', '行政学', '社会学・国際関係',
+          '教養論文・作文', '専門記述', '面接・官庁訪問対策'
+        ]
+      },
+      {
+        id: 'police_fire',
+        name: '警察官・消防官 重点型（教養・論作文・SPI）',
+        desc: '専門試験をOFFにし、数的・判断・資料・文章理解・教養知識・SPI・論作文・面接体力対策に全集中',
+        activeSubjects: [
+          '数的推理', '判断推理', '資料解釈', '文章理解（現代文）', '文章理解（英文）', 'SPI（言語・非言語・性格）',
+          '社会科学・時事', '人文科学（日本史・世界史・地理・思想）', '自然科学（数学・物理・化学・生物・地学）',
+          '教養論文・作文', '面接・官庁訪問対策'
+        ]
+      }
+    ];
+
+    /* ==========================================================================
+       3. 初期データ生成（全26科目・全タスクを「科目名だけ」×「科目別進行度」で構築）
+       ========================================================================== */
+    function buildInitialState() {
+      const todayStr = getLocalDateStr(new Date());
+      const defaultTrack = TRACK_TEMPLATES[0];
+
+      const rawSubjects = [
+        // 教養知能 (6)
+        { id: 'sub_1', name: '数的推理', category: '教養知能', weight: 1.4, progress: 42, laps: 1, hours: 18.5, note: '毎日3問演習・速さと確率を重点復習', videos: [] },
+        { id: 'sub_2', name: '判断推理', category: '教養知能', weight: 1.4, progress: 48, laps: 2, hours: 17.0, note: '対応表・命題と対偶・位置関係', videos: [] },
+        { id: 'sub_3', name: '資料解釈', category: '教養知能', weight: 1.1, progress: 30, laps: 1, hours: 6.5, note: '概算テクニックで1問3分以内を目指す', videos: [] },
+        { id: 'sub_4', name: '文章理解（現代文）', category: '教養知能', weight: 1.2, progress: 55, laps: 2, hours: 8.0, note: '要旨把握・空欄補充を1日1問継続', videos: [] },
+        { id: 'sub_5', name: '文章理解（英文）', category: '教養知能', weight: 1.2, progress: 45, laps: 1, hours: 7.5, note: '毎日1題の精読＋公務員頻出単語確認', videos: [] },
+        { id: 'sub_6', name: 'SPI（言語・非言語・性格）', category: '教養知能', weight: 1.1, progress: 0, laps: 0, hours: 0.0, note: 'SPI方式・早期枠対策', videos: [] },
+
+        // 教養知識 (3)
+        { id: 'sub_7', name: '社会科学・時事', category: '教養知識', weight: 1.2, progress: 32, laps: 1, hours: 6.5, note: '専門の憲法・経済学と最新白書データをリンク', videos: [] },
+        { id: 'sub_8', name: '人文科学（日本史・世界史・地理・思想）', category: '教養知識', weight: 0.9, progress: 15, laps: 0, hours: 2.0, note: '頻出の近現代史と地理を優先', videos: [] },
+        { id: 'sub_9', name: '自然科学（数学・物理・化学・生物・地学）', category: '教養知識', weight: 0.9, progress: 10, laps: 0, hours: 1.5, note: '生物・地学を中心に得点源化', videos: [] },
+
+        // 法律系専門 (5)
+        { id: 'sub_10', name: '憲法', category: '法律系専門', weight: 1.3, progress: 46, laps: 1, hours: 15.0, note: '人権重要判例と統治機構の条文確認', videos: [] },
+        { id: 'sub_11', name: '民法', category: '法律系専門', weight: 1.4, progress: 32, laps: 1, hours: 16.5, note: '総則・物権・債権を年内に1周完了目標', videos: [] },
+        { id: 'sub_12', name: '行政法', category: '法律系専門', weight: 1.4, progress: 26, laps: 0, hours: 12.0, note: '行政行為・行政不服審査法・行政事件訴訟法', videos: [] },
+        { id: 'sub_13', name: '商法・会社法', category: '法律系専門', weight: 0.9, progress: 0, laps: 0, hours: 0.0, note: '国税専門官・総合職の選択枠候補', videos: [] },
+        { id: 'sub_14', name: '労働法・労働事情', category: '法律系専門', weight: 1.1, progress: 0, laps: 0, hours: 0.0, note: '労働基準監督官（A）必須科目', videos: [] },
+
+        // 経済・商学系専門 (5)
+        { id: 'sub_15', name: 'ミクロ経済学', category: '経済・商学系専門', weight: 1.4, progress: 30, laps: 1, hours: 11.0, note: '消費者理論・生産者理論・市場均衡の計算演習', videos: [] },
+        { id: 'sub_16', name: 'マクロ経済学', category: '経済・商学系専門', weight: 1.4, progress: 24, laps: 0, hours: 9.5, note: 'IS-LM分析・AD-ASグラフ移動パターン', videos: [] },
+        { id: 'sub_17', name: '財政学', category: '経済・商学系専門', weight: 1.0, progress: 18, laps: 0, hours: 3.5, note: '予算・租税制度・財政事情は時事とセットで暗記', videos: [] },
+        { id: 'sub_18', name: '経営学', category: '経済・商学系専門', weight: 0.9, progress: 0, laps: 0, hours: 0.0, note: '選択科目用', videos: [] },
+        { id: 'sub_19', name: '会計学', category: '経済・商学系専門', weight: 1.3, progress: 16, laps: 0, hours: 5.0, note: '国税・財務専門官必須の財務諸表・仕訳論点', videos: [] },
+
+        // 学系・人間科学系専門 (4)
+        { id: 'sub_20', name: '政治学', category: '学系・人間科学系専門', weight: 1.0, progress: 22, laps: 0, hours: 4.5, note: '国家一般職の選択科目として効率よく暗記', videos: [] },
+        { id: 'sub_21', name: '行政学', category: '学系・人間科学系専門', weight: 1.0, progress: 20, laps: 0, hours: 4.0, note: '政治学と重複する論点から優先整理', videos: [] },
+        { id: 'sub_22', name: '社会学・国際関係', category: '学系・人間科学系専門', weight: 0.9, progress: 0, laps: 0, hours: 0.0, note: '選択科目用', videos: [] },
+        { id: 'sub_23', name: '心理学・教育学・福祉', category: '学系・人間科学系専門', weight: 1.0, progress: 0, laps: 0, hours: 0.0, note: '法務省専門職員（人間科学）対策', videos: [] },
+
+        // 記述・論文・面接 (3)
+        { id: 'sub_24', name: '教養論文・作文', category: '記述・論文・面接', weight: 1.1, progress: 20, laps: 0, hours: 4.0, note: '少子高齢化・DX・防災テーマの答案構成', videos: [] },
+        { id: 'sub_25', name: '専門記述', category: '記述・論文・面接', weight: 1.2, progress: 15, laps: 0, hours: 3.5, note: '憲法・民法・経済学・会計学から得意分野の答案構成を練習', videos: [] },
+        { id: 'sub_26', name: '面接・官庁訪問対策', category: '記述・論文・面接', weight: 1.3, progress: 18, laps: 0, hours: 3.5, note: '志望動機・ガクチカ・訪問カードの棚卸し', videos: [] }
+      ];
+
+      const subjects = rawSubjects.map(s => ({
+        ...s,
+        active: defaultTrack.activeSubjects.includes(s.name)
+      }));
+
+      // カレンダーイベント（1次試験・官庁訪問・2次面接・説明会/予約開始）
+      const events = [
+        { id: 'ev_1', type: 'exam1', title: '国家総合職（1次試験）', date: '2027-04-11', time: '09:00集合', location: '全国試験会場', note: '基礎能力・専門・政策論文', isMain: false },
+        { id: 'ev_2', type: 'exam1', title: '国税専門官（A区分・1次試験）', date: '2027-04-25', time: '09:00集合', location: '各国税局管内会場', note: '会計学・専門記述の最終確認', isMain: true },
+        { id: 'ev_3', type: 'exam1', title: '国家一般職（1次試験）', date: '2027-05-02', time: '09:00集合', location: '全国試験会場', note: '受験票・写真票・HB鉛筆確認', isMain: false },
+        { id: 'ev_4', type: 'briefing', title: '国家一般職 官庁訪問 予約開始', date: '2027-05-26', time: '09:00予約開始', location: '各府省庁採用HP', note: '志望府省庁の予約フォーム待機', isMain: false },
+        { id: 'ev_5', type: 'kanchou', title: '官庁訪問 第1クール（初日）', date: '2027-06-02', time: '09:30集合', location: '霞が関 本省庁舎', note: '訪問カード3部・スーツ・志望動機メモ', isMain: false },
+        { id: 'ev_6', type: 'interview', title: '国税専門官 2次面接試験', date: '2027-06-15', time: '13:00集合', location: '各国税局面接会場', note: '面接カード写し・税務署業務研究確認', isMain: false },
+        { id: 'ev_7', type: 'exam1', title: '地方上級（県庁・政令市 1次試験）', date: '2027-06-20', time: '09:00集合', location: '各都道府県庁会場', note: '教養・専門択一・論文', isMain: false }
+      ];
+
+      // 日別学習ログ（直近5日分の連続学習記録）
+      const studyLogs = {};
+      studyLogs[addDaysToStr(todayStr, -4)] = 2.5;
+      studyLogs[addDaysToStr(todayStr, -3)] = 3.0;
+      studyLogs[addDaysToStr(todayStr, -2)] = 2.0;
+      studyLogs[addDaysToStr(todayStr, -1)] = 3.5;
+      studyLogs[todayStr] = 1.5;
+
+      // 1. 「今日」の科目別タスク（subject: 科目名のみ, done: 完了セット数, total: 目標セット数）
+      const dailySubjectTasks = {};
+      dailySubjectTasks[todayStr] = [
+        { id: 'dt_1', subject: '数的推理', done: 1, total: 2 },
+        { id: 'dt_2', subject: '文章理解（現代文）', done: 1, total: 1 },
+        { id: 'dt_3', subject: '文章理解（英文）', done: 0, total: 1 },
+        { id: 'dt_4', subject: '民法', done: 0, total: 2 },
+        { id: 'dt_5', subject: '憲法', done: 0, total: 1 }
+      ];
+
+      // 2. 「1週間」の科目別タスク（subject: 科目名のみ, current: 達成数, target: 週間目標数）
+      const weeklySubjectTasks = [
+        { id: 'wt_1', subject: '数的推理', current: 12, target: 15 },
+        { id: 'wt_2', subject: '判断推理', current: 9, target: 15 },
+        { id: 'wt_3', subject: '文章理解（英文）', current: 5, target: 7 },
+        { id: 'wt_4', subject: '民法', current: 2, target: 4 },
+        { id: 'wt_5', subject: 'ミクロ経済学', current: 6, target: 10 }
+      ];
+
+      // 3. 「1ヶ月」の科目別タスク（month: 'YYYY-MM', subject: 科目名のみ, progress: 0..100）
+      const monthlySubjectTasks = [
+        { id: 'mt_1', month: '2026-11', subject: '数的推理', progress: 80 },
+        { id: 'mt_2', month: '2026-11', subject: '判断推理', progress: 70 },
+        { id: 'mt_3', month: '2026-11', subject: '文章理解（現代文）', progress: 100 },
+        { id: 'mt_4', month: '2026-11', subject: '憲法', progress: 60 },
+        { id: 'mt_5', month: '2026-11', subject: '民法', progress: 40 },
+        { id: 'mt_6', month: '2026-12', subject: '民法', progress: 20 },
+        { id: 'mt_7', month: '2026-12', subject: '行政法', progress: 10 },
+        { id: 'mt_8', month: '2026-12', subject: 'ミクロ経済学', progress: 25 },
+        { id: 'mt_9', month: '2027-01', subject: 'マクロ経済学', progress: 0 },
+        { id: 'mt_10', month: '2027-01', subject: '会計学', progress: 0 },
+        { id: 'mt_11', month: '2027-01', subject: '政治学', progress: 0 },
+        { id: 'mt_12', month: '2027-01', subject: '行政学', progress: 0 },
+        { id: 'mt_13', month: '2027-02', subject: '専門記述', progress: 0 },
+        { id: 'mt_14', month: '2027-02', subject: '財政学', progress: 0 },
+        { id: 'mt_15', month: '2027-03', subject: '社会科学・時事', progress: 0 },
+        { id: 'mt_16', month: '2027-03', subject: '教養論文・作文', progress: 0 },
+        { id: 'mt_17', month: '2027-04', subject: '資料解釈', progress: 0 },
+        { id: 'mt_18', month: '2027-05', subject: '面接・官庁訪問対策', progress: 0 }
+      ];
+
+      // 4. 「年間」4フェーズの科目別タスク（subject: 科目名のみ, progress: 0..100）
+      const yearlyPhases = [
+        {
+          id: 'yp_1',
+          cls: 'phase-1',
+          period: '11〜12月',
+          title: '基礎固め期',
+          subjects: [
+            { id: 'ys_1', subject: '数的推理', progress: 70 },
+            { id: 'ys_2', subject: '判断推理', progress: 65 },
+            { id: 'ys_3', subject: '文章理解（現代文）', progress: 80 },
+            { id: 'ys_4', subject: '文章理解（英文）', progress: 70 },
+            { id: 'ys_5', subject: '憲法', progress: 60 },
+            { id: 'ys_6', subject: '民法', progress: 40 },
+            { id: 'ys_7', subject: 'ミクロ経済学', progress: 35 }
+          ]
+        },
+        {
+          id: 'yp_2',
+          cls: 'phase-2',
+          period: '1〜2月',
+          title: '併願拡張期',
+          subjects: [
+            { id: 'ys_8', subject: '行政法', progress: 20 },
+            { id: 'ys_9', subject: 'マクロ経済学', progress: 20 },
+            { id: 'ys_10', subject: '会計学', progress: 15 },
+            { id: 'ys_11', subject: '政治学', progress: 10 },
+            { id: 'ys_12', subject: '行政学', progress: 10 },
+            { id: 'ys_13', subject: '専門記述', progress: 10 }
+          ]
+        },
+        {
+          id: 'yp_3',
+          cls: 'phase-3',
+          period: '3〜4月',
+          title: '直前仕上げ期',
+          subjects: [
+            { id: 'ys_14', subject: '資料解釈', progress: 20 },
+            { id: 'ys_15', subject: '社会科学・時事', progress: 25 },
+            { id: 'ys_16', subject: '財政学', progress: 15 },
+            { id: 'ys_17', subject: '教養論文・作文', progress: 10 }
+          ]
+        },
+        {
+          id: 'yp_4',
+          cls: 'phase-4',
+          period: '5〜6月',
+          title: '本番・官庁訪問期',
+          subjects: [
+            { id: 'ys_18', subject: '面接・官庁訪問対策', progress: 15 },
+            { id: 'ys_19', subject: '専門記述', progress: 10 },
+            { id: 'ys_20', subject: '教養論文・作文', progress: 10 }
+          ]
+        }
+      ];
+
+      const now = new Date();
+      return {
+        activeTab: 'home',
+        taskHorizon: 'daily',
+        selectedMonthFilter: `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`,
+        calYear: now.getFullYear(),
+        calMonth: now.getMonth() + 1,
+        selectedCalDate: todayStr,
+        subjectsViewMode: 'progress',
+        selectedTrackId: 'ippan_koku_zaimu',
+        subjectCategoryFilter: 'すべて',
+        subjectScope: 'active',
+        selectedMatrixCols: ['sougou', 'ippan', 'kokuzei', 'zaimu', 'rouki', 'chiho', 'tokubetsu', 'tokyo', 'police_fire'],
+        events,
+        subjects,
+        studyLogs,
+        dailySubjectTasks,
+        weeklySubjectTasks,
+        monthlySubjectTasks,
+        yearlyPhases
+      };
+    }
+
+    let appState = buildInitialState();
+    let resetConfirmPending = false;
+    let resetConfirmTimer = null;
+    let snapConfirmId = null;
+    let snapConfirmTimer = null;
+    let gistSyncTimer = null;
+    let lastDataFingerprint = '';
+    let lastLocalSavedTime = '';
+    let gistStatus = 'idle'; // 'idle' | 'syncing' | 'ok' | 'err'
+
+    // IndexedDB 2重バックアップミラー（SafariのlocalStorage消去に備える独立領域）
+    const idbMirror = {
+      open() {
+        return new Promise((resolve, reject) => {
+          if (!window.indexedDB) return reject(new Error('no idb'));
+          const req = window.indexedDB.open(IDB_NAME, 1);
+          req.onupgradeneeded = () => {
+            const db = req.result;
+            if (!db.objectStoreNames.contains(IDB_STORE)) {
+              db.createObjectStore(IDB_STORE);
+            }
+          };
+          req.onsuccess = () => resolve(req.result);
+          req.onerror = () => reject(req.error);
+        });
+      },
+      async set(key, val) {
+        try {
+          const db = await this.open();
+          return await new Promise((resolve) => {
+            const tx = db.transaction(IDB_STORE, 'readwrite');
+            tx.objectStore(IDB_STORE).put(val, key);
+            tx.oncomplete = () => resolve(true);
+            tx.onerror = () => resolve(false);
+          });
+        } catch (e) {
+          return false;
+        }
+      },
+      async get(key) {
+        try {
+          const db = await this.open();
+          return await new Promise((resolve) => {
+            const tx = db.transaction(IDB_STORE, 'readonly');
+            const req = tx.objectStore(IDB_STORE).get(key);
+            req.onsuccess = () => resolve(req.result || null);
+            req.onerror = () => resolve(null);
+          });
+        } catch (e) {
+          return null;
+        }
+      }
+    };
+
+    function normalizeState(parsed) {
+      const base = buildInitialState();
+      if (!parsed || typeof parsed !== 'object') return base;
+      const merged = Object.assign(base, parsed);
+      if (!Array.isArray(merged.subjects) || merged.subjects.length === 0) merged.subjects = base.subjects;
+      if (!Array.isArray(merged.events)) merged.events = base.events;
+      if (!merged.studyLogs || typeof merged.studyLogs !== 'object') merged.studyLogs = {};
+      if (!merged.dailySubjectTasks || typeof merged.dailySubjectTasks !== 'object') merged.dailySubjectTasks = {};
+      if (!Array.isArray(merged.weeklySubjectTasks)) merged.weeklySubjectTasks = [];
+      if (!Array.isArray(merged.monthlySubjectTasks)) merged.monthlySubjectTasks = [];
+      if (!Array.isArray(merged.yearlyPhases)) merged.yearlyPhases = base.yearlyPhases;
+      if (!Array.isArray(merged.selectedMatrixCols) || merged.selectedMatrixCols.length === 0) {
+        merged.selectedMatrixCols = base.selectedMatrixCols;
+      }
+      return merged;
+    }
+
+    function readAutoFileConfig() {
+      try {
+        const raw = storage.get(STORAGE_KEY_AUTOFILE);
+        if (!raw) return { enabled: false, lastExportDate: '' };
+        return Object.assign({ enabled: false, lastExportDate: '' }, JSON.parse(raw));
+      } catch (e) {
+        return { enabled: false, lastExportDate: '' };
+      }
+    }
+
+    function writeAutoFileConfig(cfg) {
+      storage.set(STORAGE_KEY_AUTOFILE, JSON.stringify(cfg));
+    }
+
+    function readGistConfig() {
+      try {
+        const raw = storage.get(STORAGE_KEY_GIST);
+        if (!raw) return { token: '', gistId: '', enabled: false, lastSync: '', lastError: '' };
+        return Object.assign({ token: '', gistId: '', enabled: false, lastSync: '', lastError: '' }, JSON.parse(raw));
+      } catch (e) {
+        return { token: '', gistId: '', enabled: false, lastSync: '', lastError: '' };
+      }
+    }
+
+    function writeGistConfig(cfg) {
+      storage.set(STORAGE_KEY_GIST, JSON.stringify(cfg));
+      idbMirror.set(STORAGE_KEY_GIST, JSON.stringify(cfg));
+    }
+
+    function readSnapshots() {
+      try {
+        const raw = storage.get(STORAGE_KEY_SNAPSHOTS);
+        if (!raw) return [];
+        const arr = JSON.parse(raw);
+        return Array.isArray(arr) ? arr : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function buildFingerprint() {
+      return JSON.stringify({
+        events: appState.events,
+        subjects: appState.subjects,
+        studyLogs: appState.studyLogs,
+        dailySubjectTasks: appState.dailySubjectTasks,
+        weeklySubjectTasks: appState.weeklySubjectTasks,
+        monthlySubjectTasks: appState.monthlySubjectTasks,
+        yearlyPhases: appState.yearlyPhases,
+        selectedTrackId: appState.selectedTrackId
+      });
+    }
+
+    function saveAutoCheckpoint(serialized, force) {
+      try {
+        const fp = buildFingerprint();
+        if (!force && fp === lastDataFingerprint) return false;
+        lastDataFingerprint = fp;
+
+        const now = new Date();
+        const todayStr = getLocalDateStr(now);
+        const hhmm = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+        const ss = String(now.getSeconds()).padStart(2, '0');
+        lastLocalSavedTime = `${hhmm}:${ss}`;
+
+        const activeSubs = appState.subjects.filter(s => s.active);
+        const avgPct = activeSubs.length > 0
+          ? Math.round(activeSubs.reduce((a, s) => a + (Number(s.progress) || 0), 0) / activeSubs.length)
+          : 0;
+        const totalHours = Math.round(appState.subjects.reduce((a, s) => a + (Number(s.hours) || 0), 0) * 10) / 10;
+
+        let list = readSnapshots();
+        const snapId = `${todayStr}_${hhmm}`;
+        const item = { id: snapId, date: todayStr, time: `${hhmm}:${ss}`, avgPct, totalHours, data: serialized };
+
+        // 同じ分（YYYY-MM-DD_HH:MM）の連続操作は最新状態に上書きし、別の分や別の日は履歴として残す
+        const sameMinIdx = list.findIndex(x => (x.id || x.date) === snapId);
+        if (sameMinIdx >= 0) {
+          list[sameMinIdx] = item;
+        } else {
+          list.unshift(item);
+        }
+
+        list.sort((a, b) => (b.id || b.date).localeCompare(a.id || a.date));
+        list = list.slice(0, 10);
+        const snapStr = JSON.stringify(list);
+        storage.set(STORAGE_KEY_SNAPSHOTS, snapStr);
+        idbMirror.set(STORAGE_KEY_SNAPSHOTS, snapStr);
+        return true;
+      } catch (e) {
+        return true;
+      }
+    }
+
+    function triggerOnceDailyAutoFileIfEnabled(serialized) {
+      const cfg = readAutoFileConfig();
+      if (!cfg.enabled) return;
+      const todayStr = getLocalDateStr(new Date());
+      if (cfg.lastExportDate === todayStr) return;
+
+      cfg.lastExportDate = todayStr;
+      writeAutoFileConfig(cfg);
+
+      try {
+        const blob = new Blob([serialized], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `koumuin_navi_auto_${todayStr}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast('本日分の自動バックアップJSONを保存しました');
+      } catch (e) {}
+    }
+
+    function queueGistSync() {
+      const cfg = readGistConfig();
+      if (!cfg.enabled || !cfg.token) return;
+      clearTimeout(gistSyncTimer);
+      gistStatus = 'syncing';
+      refreshBackupBadge(false);
+      gistSyncTimer = setTimeout(() => {
+        pushGistBackup(true);
+      }, 1800);
+    }
+
+    function loadAppState() {
+      const now = new Date();
+      lastLocalSavedTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+      const raw = storage.get(STORAGE_KEY);
+      if (!raw) {
+        const ser = JSON.stringify(appState);
+        saveAutoCheckpoint(ser, true);
+        idbMirror.set(STORAGE_KEY, ser);
+        return false;
+      }
+      try {
+        appState = normalizeState(JSON.parse(raw));
+      } catch (err) {
+        appState = buildInitialState();
+      }
+      const ser = JSON.stringify(appState);
+      saveAutoCheckpoint(ser, true);
+      idbMirror.set(STORAGE_KEY, ser);
+      return true;
+    }
+
+    function saveAppState(skipCloud) {
+      const serialized = JSON.stringify(appState);
+      storage.set(STORAGE_KEY, serialized);
+      idbMirror.set(STORAGE_KEY, serialized);
+
+      const changed = saveAutoCheckpoint(serialized, false);
+      if (changed) {
+        refreshBackupBadge(true);
+        triggerOnceDailyAutoFileIfEnabled(serialized);
+        if (!skipCloud) {
+          queueGistSync();
+        }
+      }
+    }
+
+    /* ==========================================================================
+       4. トースト・コピー・モーダル・タブ制御
+       ========================================================================== */
+    function showToast(msg) {
+      const el = document.getElementById('toast-banner');
+      if (!el) return;
+      el.textContent = msg;
+      el.classList.add('visible');
+      clearTimeout(el._timer);
+      el._timer = setTimeout(() => el.classList.remove('visible'), 2500);
+    }
+
+    function copyTextSafely(text, successMsg) {
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.top = '-9999px';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        ta.setSelectionRange(0, ta.value.length);
+        const ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+        if (ok) {
+          showToast(successMsg);
+          return;
+        }
+      } catch (e) {
+        // 手動コピーシートへフォールバック
+      }
+      const area = document.getElementById('manual-copy-area');
+      if (area) area.value = text;
+      openSheet('sheet-manual-copy');
+    }
+
+    function openSheet(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('open');
+    }
+
+    function closeSheet(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove('open');
+    }
+
+    const TAB_SUBTITLES = {
+      home: 'ホーム・学習サマリー',
+      tasks: '科目別タスク（今日・1週間・1ヶ月・年間）',
+      calendar: '日程カレンダー（試験・官庁訪問・面接）',
+      subjects_matrix: '科目別進捗・全9試験比較表',
+      settings: '志望区分・JSONバックアップ'
+    };
+
+    function switchTab(tabKey) {
+      appState.activeTab = tabKey;
+      saveAppState();
+
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      const panel = document.getElementById('panel-' + tabKey);
+      if (panel) panel.classList.add('active');
+
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      const btn = document.getElementById('nav-' + tabKey);
+      if (btn) btn.classList.add('active');
+
+      const subEl = document.getElementById('header-tab-subtitle');
+      if (subEl) subEl.textContent = TAB_SUBTITLES[tabKey] || '';
+
+      window.scrollTo({ top: 0, behavior: 'auto' });
+      renderAll();
+    }
+
+    function openTaskSubTab(horizon) {
+      appState.taskHorizon = horizon;
+      switchTab('tasks');
+    }
+
+    function openSubjectsSubTab(mode) {
+      appState.subjectsViewMode = mode;
+      switchTab('subjects_matrix');
+    }
+
+    /* ==========================================================================
+       5. 共通集計ロジック（本命日程・連続学習日数・全体レンダリング）
+       ========================================================================== */
+    function getPrimaryEvent() {
+      if (!appState.events.length) return null;
+      const main = appState.events.find(e => e.isMain);
+      if (main) return main;
+      const todayStr = getLocalDateStr(new Date());
+      const upcoming = [...appState.events]
+        .filter(e => e.date >= todayStr)
+        .sort((a, b) => a.date.localeCompare(b.date));
+      if (upcoming.length) return upcoming[0];
+      return [...appState.events].sort((a, b) => a.date.localeCompare(b.date))[0];
+    }
+
+    function calculateStudyStreak() {
+      const todayStr = getLocalDateStr(new Date());
+      const logs = appState.studyLogs || {};
+      let streak = 0;
+      let cursor = todayStr;
+
+      if (!(Number(logs[cursor]) > 0)) {
+        cursor = addDaysToStr(todayStr, -1);
+      }
+
+      while (Number(logs[cursor]) > 0) {
+        streak++;
+        cursor = addDaysToStr(cursor, -1);
+      }
+      return streak;
+    }
+
+    function renderAll() {
+      renderHeader();
+      renderHomeTab();
+      renderTasksTab();
+      renderCalendarTab();
+      renderSubjectsAndMatrixTab();
+      renderSettingsTab();
+    }
+
+    function renderHeader() {
+      const primary = getPrimaryEvent();
+      const pillEl = document.getElementById('header-main-countdown');
+      if (!pillEl) return;
+      if (!primary) {
+        pillEl.textContent = '本命: 未登録';
+        return;
+      }
+      const d = calcDaysUntil(primary.date);
+      const shortName = primary.title.replace(/（.*?）/g, '');
+      if (d > 0) {
+        pillEl.textContent = `本命: ${shortName} まであと ${d}日`;
+      } else if (d === 0) {
+        pillEl.textContent = `本命: ${shortName} 本日！`;
+      } else {
+        pillEl.textContent = `本命: ${shortName} 完了`;
+      }
+      refreshBackupBadge();
+    }
+
+    function refreshBackupBadge(flashNow) {
+      const badge = document.getElementById('header-auto-backup-badge');
+      if (!badge) return;
+      const cfg = readGistConfig();
+      const shortTime = lastLocalSavedTime ? lastLocalSavedTime.slice(0, 5) : '';
+
+      if (!cfg.enabled || !cfg.token) {
+        badge.className = 'sync-badge-header' + (flashNow ? ' flash' : '');
+        badge.textContent = shortTime ? `✓ 自動保存 ${shortTime}` : '✓ 自動保存済';
+      } else if (gistStatus === 'syncing') {
+        badge.className = 'sync-badge-header cloud-syncing';
+        badge.textContent = '🔄 クラウド保存中...';
+      } else if (gistStatus === 'err') {
+        badge.className = 'sync-badge-header cloud-err';
+        badge.textContent = '⚠️ 同期エラー';
+      } else {
+        badge.className = 'sync-badge-header cloud-ok' + (flashNow ? ' flash' : '');
+        const gistTime = cfg.lastSync ? cfg.lastSync.split(' ').pop() : shortTime;
+        badge.textContent = gistTime ? `☁️ 自動保存 ${gistTime}` : '☁️ クラウド同期中';
+      }
+
+      if (flashNow) {
+        clearTimeout(badge._flashTimer);
+        badge._flashTimer = setTimeout(() => {
+          badge.classList.remove('flash');
+        }, 650);
+      }
+    }
+
+    /* ==========================================================================
+       6. タブ1: ホーム（Home）描画 & アクション
+       ========================================================================== */
+    function renderHomeTab() {
+      const todayStr = getLocalDateStr(new Date());
+      const primary = getPrimaryEvent();
+      const streak = calculateStudyStreak();
+
+      // ヒーローカード
+      const heroEl = document.getElementById('home-hero');
+      if (primary) {
+        const d = calcDaysUntil(primary.date);
+        const typeMeta = EVENT_TYPE_META[primary.type] || EVENT_TYPE_META.exam1;
+        const dayDisp = d > 0 ? d : (d === 0 ? '当日' : '終了');
+        const unitDisp = d > 0 ? '日' : '';
+        heroEl.innerHTML = `
+          <div class="hero-top-row">
+            <span class="hero-tag">★ 本命（${escapeHtml(typeMeta.label)}）</span>
+            <span class="streak-badge num">🔥 連続学習 ${streak}日</span>
+          </div>
+          <div class="hero-body-row">
+            <div style="min-width:0;flex:1;">
+              <h2 class="hero-name">${escapeHtml(primary.title)}</h2>
+              <p class="hero-meta">${formatJapaneseDate(primary.date)}${primary.time ? ' ' + escapeHtml(primary.time) : ''}${primary.location ? ' ／ ' + escapeHtml(primary.location) : ''}</p>
+            </div>
+            <div class="hero-dday">
+              <small>本番まであと</small>
+              <strong class="num">${dayDisp}</strong>
+              <span>${unitDisp}</span>
+            </div>
+          </div>
+        `;
+      } else {
+        heroEl.innerHTML = `
+          <div class="hero-top-row">
+            <span class="hero-tag">日程未登録</span>
+            <span class="streak-badge num">🔥 連続学習 ${streak}日</span>
+          </div>
+          <div class="hero-body-row">
+            <div>
+              <h2 class="hero-name">志望試験・官庁訪問を登録しましょう</h2>
+              <p class="hero-meta">カレンダータブから2027年度プリセットを追加できます</p>
+            </div>
+          </div>
+        `;
+      }
+
+      // 2x2 KPI集計
+      const activeSubs = appState.subjects.filter(s => s.active);
+      const avgPct = activeSubs.length > 0
+        ? Math.round(activeSubs.reduce((acc, s) => acc + s.progress, 0) / activeSubs.length)
+        : 0;
+      const totalHours = appState.subjects.reduce((acc, s) => acc + (Number(s.hours) || 0), 0);
+      const todayHours = Number((appState.studyLogs || {})[todayStr]) || 0;
+
+      const todayList = (appState.dailySubjectTasks || {})[todayStr] || [];
+      const doneSubjectsCount = todayList.filter(t => t.done >= t.total && t.total > 0).length;
+
+      const upcomingEventsCount = appState.events.filter(e => e.date >= todayStr).length;
+
+      document.getElementById('kpi-progress').textContent = avgPct;
+      const bar = document.getElementById('kpi-progress-bar');
+      bar.style.width = avgPct + '%';
+      bar.className = 'bar-fill' + (avgPct >= 80 ? ' high' : '');
+
+      document.getElementById('kpi-hours').textContent = totalHours.toFixed(1);
+      document.getElementById('kpi-today-hours').textContent = `今日 +${todayHours.toFixed(1)}h 記録`;
+      document.getElementById('kpi-tasks-done').textContent = doneSubjectsCount;
+      document.getElementById('kpi-tasks-total').textContent = `/ ${todayList.length}科目`;
+      document.getElementById('kpi-events-count').textContent = upcomingEventsCount;
+
+      // 優先対策 TOP3
+      const top3 = [...activeSubs]
+        .filter(s => s.progress < 100)
+        .sort((a, b) => {
+          const scoreA = (a.weight || 1.0) * (100 - a.progress);
+          const scoreB = (b.weight || 1.0) * (100 - b.progress);
+          if (Math.abs(scoreB - scoreA) > 0.1) return scoreB - scoreA;
+          return a.progress - b.progress;
+        })
+        .slice(0, 3);
+
+      const topEl = document.getElementById('home-priority-list');
+      if (top3.length === 0) {
+        topEl.innerHTML = `<p style="margin:0;font-size:12px;color:var(--text-sub);text-align:center;padding:10px 0;">すべての対象科目が100%達成済みです！</p>`;
+      } else {
+        topEl.innerHTML = top3.map((s, idx) => {
+          const videos = Array.isArray(s.videos) ? s.videos : [];
+          return `
+            <div class="top-item">
+              <div class="top-item-head">
+                <div style="display:flex;align-items:center;gap:6px;min-width:0;flex:1;">
+                  <span class="rank-num ${idx === 0 ? 'rank-1' : ''}">${idx + 1}</span>
+                  <span class="cat-pill">${escapeHtml(s.category)}</span>
+                  <span class="top-subj-name">${escapeHtml(s.name)}</span>
+                </div>
+                <span class="num" style="font-size:13px;font-weight:800;color:var(--blue);">${s.progress}%</span>
+              </div>
+              <div class="bar-track" style="margin-top:8px;">
+                <div class="bar-fill ${s.progress >= 80 ? 'high' : ''}" style="width:${s.progress}%;"></div>
+              </div>
+              <div class="top-item-footer">
+                <div class="quick-log-group">
+                  <button type="button" class="btn-log btn-log-blue" onclick="quickLogStudy('${s.id}', 0.5)">+0.5h</button>
+                  <button type="button" class="btn-log btn-log-navy" onclick="quickLogStudy('${s.id}', 1.0)">+1.0h</button>
+                </div>
+                ${videos.length > 0
+                  ? `<a href="${escapeHtml(videos[0].url)}" target="_blank" rel="noopener noreferrer" class="btn-video-jump">▶ 講義 (${videos.length})</a>`
+                  : `<button type="button" onclick="openSubjectDetailSheet('${s.id}')" style="font-size:11px;font-weight:700;color:var(--text-sub);min-height:36px;padding:0 6px;">+ 動画/メモ</button>`
+                }
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // 今日のタスクプレビュー（科目名だけ＋進行度バーで直接操作可能）
+      document.getElementById('home-today-date-label').textContent = `${formatJapaneseDate(todayStr)} の科目別進行度`;
+      const homeTasksEl = document.getElementById('home-today-tasks');
+      if (todayList.length === 0) {
+        homeTasksEl.innerHTML = `<p style="margin:0;font-size:12px;color:var(--text-sub);text-align:center;padding:8px 0;">今日の科目タスクはまだありません。「タスク一覧 →」から科目を追加できます。</p>`;
+      } else {
+        homeTasksEl.innerHTML = todayList.map(item => renderDailySubjectCardHtml(todayStr, item, false)).join('');
+      }
+
+      // カテゴリー別進捗バー
+      const catEl = document.getElementById('home-category-bars');
+      catEl.innerHTML = CATEGORIES.map(cat => {
+        const subs = activeSubs.filter(s => s.category === cat);
+        const pct = subs.length > 0
+          ? Math.round(subs.reduce((a, s) => a + s.progress, 0) / subs.length)
+          : 0;
+        return `
+          <div class="cat-prog-row">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+              <span style="font-size:12px;font-weight:800;">${escapeHtml(cat)} <small style="color:var(--text-sub);font-weight:700;">(${subs.length}科目)</small></span>
+              <span class="num" style="font-size:12px;font-weight:800;color:${pct >= 80 ? 'var(--emerald)' : 'var(--blue)'};">${pct}%</span>
+            </div>
+            <div class="bar-track">
+              <div class="bar-fill ${pct >= 80 ? 'high' : ''}" style="width:${pct}%;"></div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function quickLogStudy(subjectId, addHours) {
+      const s = appState.subjects.find(item => item.id === subjectId);
+      if (!s) return;
+      const todayStr = getLocalDateStr(new Date());
+
+      s.hours = Math.round(((Number(s.hours) || 0) + addHours) * 10) / 10;
+      const bump = addHours >= 1.0 ? 4 : 2;
+      s.progress = Math.min(100, (Number(s.progress) || 0) + bump);
+
+      if (!appState.studyLogs) appState.studyLogs = {};
+      appState.studyLogs[todayStr] = Math.round(((Number(appState.studyLogs[todayStr]) || 0) + addHours) * 10) / 10;
+
+      saveAppState();
+      renderAll();
+      showToast(`${s.name} +${addHours.toFixed(1)}h（今日のログ計 ${appState.studyLogs[todayStr].toFixed(1)}h）`);
+    }
+
+    function copyAiStrategyPrompt() {
+      const primary = getPrimaryEvent();
+      const todayStr = getLocalDateStr(new Date());
+      const activeSubs = appState.subjects.filter(s => s.active);
+      const sortedEvents = [...appState.events].sort((a, b) => a.date.localeCompare(b.date));
+
+      const eventLines = sortedEvents.map(e => {
+        const meta = EVENT_TYPE_META[e.type] || EVENT_TYPE_META.exam1;
+        const d = calcDaysUntil(e.date);
+        const dStr = d !== null ? (d >= 0 ? `あと${d}日` : '終了') : '';
+        return `- ${e.isMain ? '【本命】' : ''}[${meta.label}] ${e.title}: ${e.date} (${dStr})${e.location ? ` @${e.location}` : ''}`;
+      }).join('\n');
+
+      const todayTasks = (appState.dailySubjectTasks || {})[todayStr] || [];
+      const dailyLines = todayTasks.map(t => {
+        const pct = Math.round((t.done / Math.max(1, t.total)) * 100);
+        return `- ${t.subject}: ${t.done}/${t.total} (${pct}%)`;
+      }).join('\n');
+
+      const weeklyLines = (appState.weeklySubjectTasks || []).map(w => {
+        const pct = Math.round((w.current / Math.max(1, w.target)) * 100);
+        return `- ${w.subject}: ${w.current}/${w.target} (${pct}%)`;
+      }).join('\n');
+
+      const subjLines = activeSubs.map(s =>
+        `- [${s.category}] ${s.name}: 進捗 ${s.progress}% / ${s.laps}周 / 累計 ${Number(s.hours).toFixed(1)}h${s.note ? `（${s.note}）` : ''}`
+      ).join('\n');
+
+      const promptText = [
+        'あなたは公務員試験の専属合格戦略コーチです。以下の私の併願・官庁訪問・面接スケジュール、科目別タスク進行度、全対象科目の進捗データをもとに、今週やるべき最優先戦略を提案してください。',
+        '',
+        '【試験・官庁訪問・面接スケジュール】',
+        eventLines || '- 未登録',
+        '',
+        '【今日の科目別タスク進行度】',
+        dailyLines || '- 未登録',
+        '',
+        '【1週間の科目別タスク進行度】',
+        weeklyLines || '- 未登録',
+        '',
+        `【受験対象科目の全体進捗状況（全${activeSubs.length}科目）】`,
+        subjLines || '- 対象科目なし',
+        '',
+        '【相談したいこと】',
+        primary ? `1. 本命「${primary.title}」に向けて、今週最優先で時間を投下すべき上位3科目とその理由` : '1. 今週最優先で時間を投下すべき上位3科目とその理由',
+        '2. 併願先・記述・官庁訪問とのバランスを踏まえた、深追いしすぎない方がよい論点と時間配分',
+        '3. 現在の科目別タスク進行ペースに対する具体的な改善アクション'
+      ].join('\n');
+
+      copyTextSafely(promptText, '今週のAI学習戦略プロンプトをコピーしました！');
+    }
+
+    /* ==========================================================================
+       7. タブ2: タスク（今日 / 1週間 / 1ヶ月 / 年間 - 科目名だけ＋進行度バー）
+       ========================================================================== */
+    function setTaskHorizon(horizon) {
+      appState.taskHorizon = horizon;
+      saveAppState();
+      renderTasksTab();
+    }
+
+    function renderTasksTab() {
+      ['daily', 'weekly', 'monthly', 'yearly'].forEach(h => {
+        const btn = document.getElementById('seg-' + h);
+        if (btn) btn.classList.toggle('active', appState.taskHorizon === h);
+      });
+
+      const container = document.getElementById('tasks-horizon-container');
+      const h = appState.taskHorizon || 'daily';
+
+      if (h === 'daily') {
+        renderDailyTasksView(container);
+      } else if (h === 'weekly') {
+        renderWeeklyTasksView(container);
+      } else if (h === 'monthly') {
+        renderMonthlyTasksView(container);
+      } else {
+        renderYearlyTasksView(container);
+      }
+    }
+
+    // 共通カード描画：今日の科目別進行度カード（科目名だけ＋進行度バー＋ワンタップ操作）
+    function renderDailySubjectCardHtml(dateStr, item, showDelete) {
+      const total = Math.max(1, Number(item.total) || 1);
+      const done = Math.max(0, Math.min(total, Number(item.done) || 0));
+      const pct = Math.round((done / total) * 100);
+      const isComplete = done >= total;
+
+      return `
+        <div class="subj-task-card ${isComplete ? 'completed' : ''}">
+          <div class="subj-task-top">
+            <span class="subj-task-title">${escapeHtml(item.subject)}</span>
+            <div class="subj-task-stat">
+              <span class="stat-ratio num">${done} / ${total}</span>
+              <span class="stat-pct ${isComplete ? 'done' : ''} num">${pct}%</span>
+            </div>
+          </div>
+          <div class="bar-track" style="margin-top:8px;">
+            <div class="bar-fill ${isComplete ? 'high' : ''}" style="width:${pct}%;"></div>
+          </div>
+          <div class="subj-task-controls">
+            <div class="step-btn-group">
+              <button type="button" class="btn-step" onclick="adjustDailySubjectDone('${dateStr}', '${item.id}', -1)" aria-label="完了セットを減らす">－</button>
+              <button type="button" class="btn-step plus" onclick="adjustDailySubjectDone('${dateStr}', '${item.id}', 1)" aria-label="完了セットを増やす">＋</button>
+              <button type="button" class="btn-step add-set" onclick="incrementDailySubjectTotal('${dateStr}', '${item.id}')">+セット</button>
+            </div>
+            <div class="step-btn-group">
+              <button type="button" class="btn-done-toggle ${isComplete ? 'active' : ''}" onclick="toggleDailySubjectComplete('${dateStr}', '${item.id}')">
+                ${isComplete ? '完了 ✓' : '完了にする'}
+              </button>
+              ${showDelete ? `<button type="button" class="btn-del-mini" onclick="deleteDailySubjectTask('${dateStr}', '${item.id}')" aria-label="削除">✕</button>` : ''}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // 7-1. 「今日」の科目別タスク画面
+    function renderDailyTasksView(container) {
+      const todayStr = getLocalDateStr(new Date());
+      const list = (appState.dailySubjectTasks || {})[todayStr] || [];
+      const totalSets = list.reduce((a, b) => a + Math.max(1, Number(b.total) || 1), 0);
+      const doneSets = list.reduce((a, b) => a + Math.min(Math.max(1, Number(b.total) || 1), Number(b.done) || 0), 0);
+      const overallPct = totalSets > 0 ? Math.round((doneSets / totalSets) * 100) : 0;
+
+      container.innerHTML = `
+        <div class="horizon-summary-banner">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <span style="font-size:12px;font-weight:800;color:#fde047;">今日（${formatShortMonthDay(todayStr)}）の科目別達成率</span>
+            <span class="num" style="font-size:18px;font-weight:800;">${overallPct}% <small style="font-size:11px;font-weight:700;color:#bfdbfe;">(${doneSets}/${totalSets})</small></span>
+          </div>
+          <div class="bar-track" style="background:rgba(255,255,255,0.2);">
+            <div class="bar-fill ${overallPct >= 100 ? 'high' : ''}" style="width:${overallPct}%;background:${overallPct >= 100 ? '#34d399' : '#facc15'};"></div>
+          </div>
+        </div>
+
+        <button type="button" class="btn-cta" onclick="openAddTaskSheet('daily', '${todayStr}')">
+          + 今日の科目を追加する
+        </button>
+
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <h2 class="card-title">今日のタスク（科目ごと）</h2>
+              <p class="card-desc">科目名ごとの進行度バーをワンタップ操作（カレンダーの今日と自動同期）</p>
+            </div>
+          </div>
+          ${list.length === 0
+            ? `<p style="margin:0;font-size:12px;color:var(--text-sub);text-align:center;padding:14px 0;">上のボタンから今日進める科目を追加しましょう。</p>`
+            : list.map(item => renderDailySubjectCardHtml(todayStr, item, true)).join('')
+          }
+        </div>
+      `;
+    }
+
+    function adjustDailySubjectDone(dateStr, taskId, delta) {
+      const list = (appState.dailySubjectTasks || {})[dateStr] || [];
+      const item = list.find(t => t.id === taskId);
+      if (!item) return;
+      const total = Math.max(1, Number(item.total) || 1);
+      item.done = Math.max(0, Math.min(total, (Number(item.done) || 0) + delta));
+      saveAppState();
+      renderAll();
+      if (document.getElementById('sheet-date-detail').classList.contains('open')) {
+        renderDateDetailSheet(dateStr);
+      }
+    }
+
+    function incrementDailySubjectTotal(dateStr, taskId) {
+      const list = (appState.dailySubjectTasks || {})[dateStr] || [];
+      const item = list.find(t => t.id === taskId);
+      if (!item) return;
+      item.total = (Number(item.total) || 1) + 1;
+      saveAppState();
+      renderAll();
+      if (document.getElementById('sheet-date-detail').classList.contains('open')) {
+        renderDateDetailSheet(dateStr);
+      }
+      showToast(`${item.subject} の目標セット数を ${item.total} に増やしました`);
+    }
+
+    function toggleDailySubjectComplete(dateStr, taskId) {
+      const list = (appState.dailySubjectTasks || {})[dateStr] || [];
+      const item = list.find(t => t.id === taskId);
+      if (!item) return;
+      const total = Math.max(1, Number(item.total) || 1);
+      item.done = item.done >= total ? 0 : total;
+      saveAppState();
+      renderAll();
+      if (document.getElementById('sheet-date-detail').classList.contains('open')) {
+        renderDateDetailSheet(dateStr);
+      }
+    }
+
+    function deleteDailySubjectTask(dateStr, taskId) {
+      if (!appState.dailySubjectTasks || !appState.dailySubjectTasks[dateStr]) return;
+      appState.dailySubjectTasks[dateStr] = appState.dailySubjectTasks[dateStr].filter(t => t.id !== taskId);
+      saveAppState();
+      renderAll();
+      if (document.getElementById('sheet-date-detail').classList.contains('open')) {
+        renderDateDetailSheet(dateStr);
+      }
+      showToast('科目タスクを削除しました');
+    }
+
+    // 7-2. 「1週間」の科目別タスク画面
+    function renderWeeklyTasksView(container) {
+      const list = appState.weeklySubjectTasks || [];
+      const avgPct = list.length > 0
+        ? Math.round(list.reduce((acc, w) => acc + Math.min(100, Math.round((w.current / Math.max(1, w.target)) * 100)), 0) / list.length)
+        : 0;
+
+      container.innerHTML = `
+        <div class="horizon-summary-banner">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <span style="font-size:12px;font-weight:800;color:#fde047;">1週間の科目別平均達成率</span>
+            <span class="num" style="font-size:18px;font-weight:800;">${avgPct}%</span>
+          </div>
+          <div class="bar-track" style="background:rgba(255,255,255,0.2);">
+            <div class="bar-fill" style="width:${avgPct}%;background:${avgPct >= 100 ? '#34d399' : '#facc15'};"></div>
+          </div>
+        </div>
+
+        <button type="button" class="btn-cta" onclick="openAddTaskSheet('weekly')">
+          + 1週間の科目を追加する
+        </button>
+
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <h2 class="card-title">1週間のタスク（科目ごと）</h2>
+              <p class="card-desc">科目ごとの週間目標回数に対する進行度バー（－ / ＋ で更新）</p>
+            </div>
+          </div>
+          ${list.length === 0
+            ? `<p style="margin:0;font-size:12px;color:var(--text-sub);text-align:center;padding:14px 0;">上のボタンから今週の科目を追加してください。</p>`
+            : list.map(w => {
+              const target = Math.max(1, Number(w.target) || 1);
+              const current = Math.max(0, Number(w.current) || 0);
+              const pct = Math.min(100, Math.round((current / target) * 100));
+              const isDone = current >= target;
+              return `
+                <div class="subj-task-card ${isDone ? 'completed' : ''}">
+                  <div class="subj-task-top">
+                    <span class="subj-task-title">${escapeHtml(w.subject)}</span>
+                    <div class="subj-task-stat">
+                      <span class="stat-ratio num">${current} / ${target}</span>
+                      <span class="stat-pct ${isDone ? 'done' : ''} num">${pct}%</span>
+                    </div>
+                  </div>
+                  <div class="bar-track" style="margin-top:8px;">
+                    <div class="bar-fill ${isDone ? 'high' : ''}" style="width:${pct}%;"></div>
+                  </div>
+                  <div class="subj-task-controls">
+                    <div class="step-btn-group">
+                      <button type="button" class="btn-step" onclick="adjustWeeklySubjectTask('${w.id}', -1)">－</button>
+                      <button type="button" class="btn-step plus" onclick="adjustWeeklySubjectTask('${w.id}', 1)">＋</button>
+                    </div>
+                    <div class="step-btn-group">
+                      <button type="button" class="btn-done-toggle ${isDone ? 'active' : ''}" onclick="toggleWeeklySubjectComplete('${w.id}')">
+                        ${isDone ? '達成 ✓' : '達成にする'}
+                      </button>
+                      <button type="button" class="btn-del-mini" onclick="deleteWeeklySubjectTask('${w.id}')" aria-label="削除">✕</button>
+                    </div>
+                  </div>
+                </div>
+              `;
+            }).join('')
+          }
+        </div>
+      `;
+    }
+
+    function adjustWeeklySubjectTask(id, delta) {
+      const item = (appState.weeklySubjectTasks || []).find(w => w.id === id);
+      if (!item) return;
+      item.current = Math.max(0, (Number(item.current) || 0) + delta);
+      saveAppState();
+      renderTasksTab();
+    }
+
+    function toggleWeeklySubjectComplete(id) {
+      const item = (appState.weeklySubjectTasks || []).find(w => w.id === id);
+      if (!item) return;
+      const target = Math.max(1, Number(item.target) || 1);
+      item.current = item.current >= target ? 0 : target;
+      saveAppState();
+      renderTasksTab();
+    }
+
+    function deleteWeeklySubjectTask(id) {
+      appState.weeklySubjectTasks = (appState.weeklySubjectTasks || []).filter(w => w.id !== id);
+      saveAppState();
+      renderTasksTab();
+      showToast('週間科目タスクを削除しました');
+    }
+
+    // 7-3. 「1ヶ月」の科目別タスク画面（月別セレクター 2026年11月〜2027年6月）
+    function renderMonthlyTasksView(container) {
+      const months = [
+        { val: '2026-11', label: '2026年11月' },
+        { val: '2026-12', label: '2026年12月' },
+        { val: '2027-01', label: '2027年1月' },
+        { val: '2027-02', label: '2027年2月' },
+        { val: '2027-03', label: '2027年3月' },
+        { val: '2027-04', label: '2027年4月' },
+        { val: '2027-05', label: '2027年5月' },
+        { val: '2027-06', label: '2027年6月' }
+      ];
+      const selected = appState.selectedMonthFilter || '2026-11';
+      const list = (appState.monthlySubjectTasks || []).filter(m => m.month === selected);
+      const avgPct = list.length > 0
+        ? Math.round(list.reduce((a, m) => a + (Number(m.progress) || 0), 0) / list.length)
+        : 0;
+
+      container.innerHTML = `
+        <div class="card" style="padding:12px;">
+          <div class="h-scroll">
+            ${months.map(m => `
+              <button type="button" class="chip-btn ${selected === m.val ? 'active' : ''}" onclick="selectMonthlyFilter('${m.val}')">
+                ${m.label}
+              </button>
+            `).join('')}
+          </div>
+        </div>
+
+        <div class="horizon-summary-banner">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <span style="font-size:12px;font-weight:800;color:#fde047;">${escapeHtml(selected)} の月間科目平均進捗</span>
+            <span class="num" style="font-size:18px;font-weight:800;">${avgPct}%</span>
+          </div>
+          <div class="bar-track" style="background:rgba(255,255,255,0.2);">
+            <div class="bar-fill" style="width:${avgPct}%;background:${avgPct >= 100 ? '#34d399' : '#facc15'};"></div>
+          </div>
+        </div>
+
+        <button type="button" class="btn-cta" onclick="openAddTaskSheet('monthly', '${selected}')">
+          + この月の科目を追加する
+        </button>
+
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <h2 class="card-title">1ヶ月のタスク（科目ごと）</h2>
+              <p class="card-desc">科目ごとに -10% / +10% / 完了にする で進行度を管理</p>
+            </div>
+          </div>
+          ${list.length === 0
+            ? `<p style="margin:0;font-size:12px;color:var(--text-sub);text-align:center;padding:14px 0;">上のボタンからこの月の重点科目を追加しましょう。</p>`
+            : list.map(m => {
+              const pct = Math.max(0, Math.min(100, Number(m.progress) || 0));
+              const isDone = pct >= 100;
+              return `
+                <div class="subj-task-card ${isDone ? 'completed' : ''}">
+                  <div class="subj-task-top">
+                    <span class="subj-task-title">${escapeHtml(m.subject)}</span>
+                    <div class="subj-task-stat">
+                      <span class="stat-pct ${isDone ? 'done' : ''} num">${pct}%</span>
+                    </div>
+                  </div>
+                  <div class="bar-track" style="margin-top:8px;">
+                    <div class="bar-fill ${isDone ? 'high' : ''}" style="width:${pct}%;"></div>
+                  </div>
+                  <div class="subj-task-controls">
+                    <div class="step-btn-group">
+                      <button type="button" class="btn-step" onclick="adjustMonthlySubjectTask('${m.id}', -10)">-10%</button>
+                      <button type="button" class="btn-step plus" onclick="adjustMonthlySubjectTask('${m.id}', 10)">+10%</button>
+                    </div>
+                    <div class="step-btn-group">
+                      <button type="button" class="btn-done-toggle ${isDone ? 'active' : ''}" onclick="toggleMonthlySubjectComplete('${m.id}')">
+                        ${isDone ? '完了 ✓' : '完了にする'}
+                      </button>
+                      <button type="button" class="btn-del-mini" onclick="deleteMonthlySubjectTask('${m.id}')" aria-label="削除">✕</button>
+                    </div>
+                  </div>
+                </div>
+              `;
+            }).join('')
+          }
+        </div>
+      `;
+    }
+
+    function selectMonthlyFilter(monthVal) {
+      appState.selectedMonthFilter = monthVal;
+      saveAppState();
+      renderTasksTab();
+    }
+
+    function adjustMonthlySubjectTask(id, delta) {
+      const item = (appState.monthlySubjectTasks || []).find(m => m.id === id);
+      if (!item) return;
+      item.progress = Math.max(0, Math.min(100, (Number(item.progress) || 0) + delta));
+      saveAppState();
+      renderTasksTab();
+    }
+
+    function toggleMonthlySubjectComplete(id) {
+      const item = (appState.monthlySubjectTasks || []).find(m => m.id === id);
+      if (!item) return;
+      item.progress = item.progress >= 100 ? 0 : 100;
+      saveAppState();
+      renderTasksTab();
+    }
+
+    function deleteMonthlySubjectTask(id) {
+      appState.monthlySubjectTasks = (appState.monthlySubjectTasks || []).filter(m => m.id !== id);
+      saveAppState();
+      renderTasksTab();
+      showToast('月間科目タスクを削除しました');
+    }
+
+    // 7-4. 「年間」4フェーズの科目別タスク画面
+    function renderYearlyTasksView(container) {
+      const phases = appState.yearlyPhases || [];
+      container.innerHTML = phases.map(p => {
+        const subs = Array.isArray(p.subjects) ? p.subjects : [];
+        const phaseAvg = subs.length > 0
+          ? Math.round(subs.reduce((a, s) => a + (Number(s.progress) || 0), 0) / subs.length)
+          : 0;
+
+        return `
+          <div class="phase-card ${escapeHtml(p.cls)}">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;">
+              <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                <span class="cat-pill num">${escapeHtml(p.period)}</span>
+                <strong style="font-size:14px;color:var(--navy);">${escapeHtml(p.title)}</strong>
+              </div>
+              <button type="button" class="btn-phase-add" onclick="openAddTaskSheet('yearly', '${p.id}')">+ 科目</button>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+              <div class="bar-track" style="flex:1;">
+                <div class="bar-fill ${phaseAvg >= 80 ? 'high' : ''}" style="width:${phaseAvg}%;"></div>
+              </div>
+              <span class="num" style="font-size:11px;font-weight:800;color:var(--text-sub);">${phaseAvg}%</span>
+            </div>
+
+            ${subs.length === 0
+              ? `<p style="margin:0;font-size:11px;color:var(--text-muted);text-align:center;padding:8px 0;">このフェーズの科目はまだありません。</p>`
+              : subs.map(s => {
+                const pct = Math.max(0, Math.min(100, Number(s.progress) || 0));
+                const isDone = pct >= 100;
+                return `
+                  <div class="subj-task-card ${isDone ? 'completed' : ''}">
+                    <div class="subj-task-top">
+                      <span class="subj-task-title">${escapeHtml(s.subject)}</span>
+                      <div class="subj-task-stat">
+                        <span class="stat-pct ${isDone ? 'done' : ''} num">${pct}%</span>
+                      </div>
+                    </div>
+                    <div class="bar-track" style="margin-top:8px;">
+                      <div class="bar-fill ${isDone ? 'high' : ''}" style="width:${pct}%;"></div>
+                    </div>
+                    <div class="subj-task-controls">
+                      <div class="step-btn-group">
+                        <button type="button" class="btn-step" onclick="adjustYearlySubjectTask('${p.id}', '${s.id}', -10)">-10%</button>
+                        <button type="button" class="btn-step plus" onclick="adjustYearlySubjectTask('${p.id}', '${s.id}', 10)">+10%</button>
+                      </div>
+                      <div class="step-btn-group">
+                        <button type="button" class="btn-done-toggle ${isDone ? 'active' : ''}" onclick="toggleYearlySubjectComplete('${p.id}', '${s.id}')">
+                          ${isDone ? '完了 ✓' : '完了にする'}
+                        </button>
+                        <button type="button" class="btn-del-mini" onclick="deleteYearlySubjectTask('${p.id}', '${s.id}')" aria-label="削除">✕</button>
+                      </div>
+                    </div>
+                  </div>
+                `;
+              }).join('')
+            }
+          </div>
+        `;
+      }).join('');
+    }
+
+    function adjustYearlySubjectTask(phaseId, itemId, delta) {
+      const phase = (appState.yearlyPhases || []).find(p => p.id === phaseId);
+      if (!phase) return;
+      const item = phase.subjects.find(s => s.id === itemId);
+      if (!item) return;
+      item.progress = Math.max(0, Math.min(100, (Number(item.progress) || 0) + delta));
+      saveAppState();
+      renderTasksTab();
+    }
+
+    function toggleYearlySubjectComplete(phaseId, itemId) {
+      const phase = (appState.yearlyPhases || []).find(p => p.id === phaseId);
+      if (!phase) return;
+      const item = phase.subjects.find(s => s.id === itemId);
+      if (!item) return;
+      item.progress = item.progress >= 100 ? 0 : 100;
+      saveAppState();
+      renderTasksTab();
+    }
+
+    function deleteYearlySubjectTask(phaseId, itemId) {
+      const phase = (appState.yearlyPhases || []).find(p => p.id === phaseId);
+      if (!phase) return;
+      phase.subjects = phase.subjects.filter(s => s.id !== itemId);
+      saveAppState();
+      renderTasksTab();
+      showToast('年間フェーズから科目を削除しました');
+    }
+
+    /* ==========================================================================
+       7-5. 科目別タスク追加モーダル（文字入力なし・科目選択＆回数選択のみ）
+       ========================================================================== */
+    let currentAddTaskCtx = { horizon: 'daily', extra: '' };
+
+    function openAddTaskSheet(horizon, extra) {
+      currentAddTaskCtx = { horizon, extra: extra || '' };
+      const titleMap = {
+        daily: `科目を追加（${formatShortMonthDay(extra || getLocalDateStr(new Date()))}）`,
+        weekly: '1週間の科目を追加',
+        monthly: `1ヶ月の科目を追加（${extra}）`,
+        yearly: '年間フェーズに科目を追加'
+      };
+      document.getElementById('add-task-sheet-title').textContent = titleMap[horizon] || '科目を追加';
+
+      const activeSubs = appState.subjects.filter(s => s.active);
+      const allSubs = appState.subjects;
+      const defaultSubj = activeSubs.length > 0 ? activeSubs[0].name : allSubs[0].name;
+
+      const optionsHtml = allSubs.map(s =>
+        `<option value="${escapeHtml(s.name)}" ${s.name === defaultSubj ? 'selected' : ''}>${escapeHtml(s.name)}${s.active ? '' : '（対象外）'}</option>`
+      ).join('');
+
+      const chipsHtml = activeSubs.map(s => `
+        <button type="button" class="subj-pick-chip ${s.name === defaultSubj ? 'selected' : ''}" onclick="selectTaskPickerChip(this, '${escapeHtml(s.name)}')">
+          ${escapeHtml(s.name)}
+        </button>
+      `).join('');
+
+      let extraControlHtml = '';
+      if (horizon === 'daily') {
+        extraControlHtml = `
+          <div>
+            <span class="field-label">今日の目標セット数</span>
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;">
+              <button type="button" class="chip-btn active" data-val="1" onclick="selectPickerNumberPill(this, 'task-picker-count')">1セット</button>
+              <button type="button" class="chip-btn" data-val="2" onclick="selectPickerNumberPill(this, 'task-picker-count')">2セット</button>
+              <button type="button" class="chip-btn" data-val="3" onclick="selectPickerNumberPill(this, 'task-picker-count')">3セット</button>
+              <button type="button" class="chip-btn" data-val="5" onclick="selectPickerNumberPill(this, 'task-picker-count')">5セット</button>
+            </div>
+            <input type="hidden" id="task-picker-count" value="1" />
+          </div>
+        `;
+      } else if (horizon === 'weekly') {
+        extraControlHtml = `
+          <div>
+            <span class="field-label">1週間の目標回数</span>
+            <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;">
+              <button type="button" class="chip-btn" data-val="3" onclick="selectPickerNumberPill(this, 'task-picker-count')">3</button>
+              <button type="button" class="chip-btn" data-val="5" onclick="selectPickerNumberPill(this, 'task-picker-count')">5</button>
+              <button type="button" class="chip-btn active" data-val="7" onclick="selectPickerNumberPill(this, 'task-picker-count')">7</button>
+              <button type="button" class="chip-btn" data-val="10" onclick="selectPickerNumberPill(this, 'task-picker-count')">10</button>
+              <button type="button" class="chip-btn" data-val="15" onclick="selectPickerNumberPill(this, 'task-picker-count')">15</button>
+            </div>
+            <input type="hidden" id="task-picker-count" value="7" />
+          </div>
+        `;
+      }
+
+      document.getElementById('add-task-sheet-body').innerHTML = `
+        <div>
+          <label class="field-label" for="task-picker-select">科目を選択（科目名のみで登録）</label>
+          <select id="task-picker-select" onchange="syncTaskPickerChipsFromSelect(this.value)">
+            ${optionsHtml}
+          </select>
+        </div>
+
+        <div>
+          <span class="field-label">受験対象科目からワンタップ選択</span>
+          <div id="task-picker-chips" class="subj-pick-grid">
+            ${chipsHtml}
+          </div>
+        </div>
+
+        ${extraControlHtml}
+
+        <button type="button" class="btn-cta" onclick="confirmAddSubjectTask()">
+          この科目を追加する
+        </button>
+      `;
+
+      openSheet('sheet-add-task');
+    }
+
+    function selectTaskPickerChip(btnEl, subjectName) {
+      document.querySelectorAll('#task-picker-chips .subj-pick-chip').forEach(c => c.classList.remove('selected'));
+      btnEl.classList.add('selected');
+      const sel = document.getElementById('task-picker-select');
+      if (sel) sel.value = subjectName;
+    }
+
+    function syncTaskPickerChipsFromSelect(subjectName) {
+      document.querySelectorAll('#task-picker-chips .subj-pick-chip').forEach(c => {
+        c.classList.toggle('selected', c.textContent.trim() === subjectName);
+      });
+    }
+
+    function selectPickerNumberPill(btnEl, hiddenInputId) {
+      const parent = btnEl.parentElement;
+      if (parent) {
+        parent.querySelectorAll('.chip-btn').forEach(b => b.classList.remove('active'));
+      }
+      btnEl.classList.add('active');
+      const input = document.getElementById(hiddenInputId);
+      if (input) input.value = btnEl.getAttribute('data-val') || '1';
+    }
+
+    function confirmAddSubjectTask() {
+      const sel = document.getElementById('task-picker-select');
+      const subject = sel ? sel.value : '';
+      if (!subject) return;
+
+      const countInput = document.getElementById('task-picker-count');
+      const countVal = countInput ? Math.max(1, Number(countInput.value) || 1) : 1;
+      const { horizon, extra } = currentAddTaskCtx;
+
+      if (horizon === 'daily') {
+        const dateStr = extra || getLocalDateStr(new Date());
+        if (!appState.dailySubjectTasks) appState.dailySubjectTasks = {};
+        if (!appState.dailySubjectTasks[dateStr]) appState.dailySubjectTasks[dateStr] = [];
+        const existing = appState.dailySubjectTasks[dateStr].find(t => t.subject === subject);
+        if (existing) {
+          existing.total += countVal;
+          showToast(`${subject} に +${countVal}セット追加しました`);
+        } else {
+          appState.dailySubjectTasks[dateStr].push({
+            id: 'dt_' + Date.now(),
+            subject,
+            done: 0,
+            total: countVal
+          });
+          showToast(`${subject} を追加しました`);
+        }
+      } else if (horizon === 'weekly') {
+        if (!appState.weeklySubjectTasks) appState.weeklySubjectTasks = [];
+        const existing = appState.weeklySubjectTasks.find(w => w.subject === subject);
+        if (existing) {
+          existing.target = countVal;
+          showToast(`${subject} の週間目標を ${countVal} に更新しました`);
+        } else {
+          appState.weeklySubjectTasks.push({
+            id: 'wt_' + Date.now(),
+            subject,
+            current: 0,
+            target: countVal
+          });
+          showToast(`${subject} を週間タスクに追加しました`);
+        }
+      } else if (horizon === 'monthly') {
+        const monthVal = extra || appState.selectedMonthFilter || '2026-11';
+        if (!appState.monthlySubjectTasks) appState.monthlySubjectTasks = [];
+        const existing = appState.monthlySubjectTasks.find(m => m.month === monthVal && m.subject === subject);
+        if (existing) {
+          showToast(`${subject} はすでにこの月に登録済みです`);
+        } else {
+          appState.monthlySubjectTasks.push({
+            id: 'mt_' + Date.now(),
+            month: monthVal,
+            subject,
+            progress: 0
+          });
+          showToast(`${subject} を月間タスクに追加しました`);
+        }
+      } else if (horizon === 'yearly') {
+        const phase = (appState.yearlyPhases || []).find(p => p.id === extra);
+        if (phase) {
+          const existing = phase.subjects.find(s => s.subject === subject);
+          if (existing) {
+            showToast(`${subject} はすでにこのフェーズに登録済みです`);
+          } else {
+            phase.subjects.push({
+              id: 'ys_' + Date.now(),
+              subject,
+              progress: 0
+            });
+            showToast(`${subject} を「${phase.title}」に追加しました`);
+          }
+        }
+      }
+
+      saveAppState();
+      closeSheet('sheet-add-task');
+      renderAll();
+      if (horizon === 'daily' && document.getElementById('sheet-date-detail').classList.contains('open')) {
+        renderDateDetailSheet(extra || getLocalDateStr(new Date()));
+      }
+    }
+
+    /* ==========================================================================
+       8. タブ3: カレンダー（1次試験・官庁訪問・2次面接・説明会・学習ログ・科目別タスク）
+       ========================================================================== */
+    function renderCalendarTab() {
+      const todayStr = getLocalDateStr(new Date());
+      const year = appState.calYear;
+      const month = appState.calMonth;
+
+      // 同日重複チェック
+      const dateEventMap = {};
+      appState.events.forEach(ev => {
+        if (!ev.date) return;
+        if (!dateEventMap[ev.date]) dateEventMap[ev.date] = [];
+        dateEventMap[ev.date].push(ev);
+      });
+
+      const conflictDates = Object.entries(dateEventMap).filter(([, list]) => list.length >= 2);
+      const conflictBanner = document.getElementById('calendar-conflict-banner');
+      if (conflictDates.length > 0) {
+        const lines = conflictDates
+          .sort(([d1], [d2]) => d1.localeCompare(d2))
+          .map(([dt, list]) => `${formatJapaneseDate(dt)}：「${list.map(x => x.title).join('」と「')}」`)
+          .join('<br>');
+        conflictBanner.innerHTML = `<strong>⚠️ 日程重複アラート（同日に複数の試験・訪問・面接が重なっています）</strong>${lines}`;
+        conflictBanner.style.display = 'block';
+      } else {
+        conflictBanner.style.display = 'none';
+      }
+
+      document.getElementById('cal-month-title').textContent = `${year}年 ${month}月`;
+      const firstDayWeekday = new Date(year, month - 1, 1).getDay();
+      const daysInMonth = new Date(year, month, 0).getDate();
+
+      let cellsHtml = '';
+      for (let i = 0; i < firstDayWeekday; i++) {
+        cellsHtml += `<div class="cal-cell empty"></div>`;
+      }
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const weekday = (firstDayWeekday + day - 1) % 7;
+        const dayEvents = dateEventMap[dateStr] || [];
+        const loggedHours = Number((appState.studyLogs || {})[dateStr]) || 0;
+        const isConflict = dayEvents.length >= 2;
+        const isToday = dateStr === todayStr;
+        const isSelected = dateStr === appState.selectedCalDate;
+
+        let heatClass = '';
+        if (loggedHours >= 4) heatClass = 'heat-3';
+        else if (loggedHours >= 2) heatClass = 'heat-2';
+        else if (loggedHours > 0) heatClass = 'heat-1';
+
+        const dotsHtml = dayEvents.slice(0, 4).map(ev =>
+          `<span class="ev-dot ${escapeHtml(ev.type)}"></span>`
+        ).join('');
+
+        cellsHtml += `
+          <button
+            type="button"
+            class="cal-cell ${heatClass} ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''} ${isConflict ? 'conflict-day' : ''}"
+            onclick="openDateDetailModal('${dateStr}')"
+          >
+            <span class="cal-day-num ${weekday === 0 ? 'sun' : (weekday === 6 ? 'sat' : '')} num">${day}</span>
+            <div class="cal-dots">${dotsHtml}</div>
+            <span class="cal-hours-mini num">${loggedHours > 0 ? loggedHours.toFixed(1) + 'h' : ''}</span>
+          </button>
+        `;
+      }
+      document.getElementById('cal-days-grid').innerHTML = cellsHtml;
+
+      // 登録済みイベント一覧
+      const sortedEvents = [...appState.events].sort((a, b) => a.date.localeCompare(b.date));
+      const listEl = document.getElementById('calendar-upcoming-list');
+      if (sortedEvents.length === 0) {
+        listEl.innerHTML = `<p style="margin:0;font-size:12px;color:var(--text-sub);text-align:center;">登録されている予定はありません。</p>`;
+      } else {
+        listEl.innerHTML = sortedEvents.map(ev => {
+          const meta = EVENT_TYPE_META[ev.type] || EVENT_TYPE_META.exam1;
+          const d = calcDaysUntil(ev.date);
+          const dStr = d > 0 ? `あと${d}日` : (d === 0 ? '本日！' : '終了');
+          const isDup = (dateEventMap[ev.date] || []).length >= 2;
+          return `
+            <div class="event-list-card ${ev.isMain ? 'is-main' : ''}">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap;margin-bottom:5px;">
+                <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;">
+                  <span class="ev-badge ${meta.badgeClass}">${escapeHtml(meta.label)}</span>
+                  ${ev.isMain ? `<span style="font-size:10px;font-weight:800;background:#fef08a;color:#713f12;padding:2px 7px;border-radius:6px;">★ 本命</span>` : ''}
+                  ${isDup ? `<span style="font-size:10px;font-weight:800;background:var(--rose-bg);color:#be123c;padding:2px 7px;border-radius:6px;">⚠️ 重複</span>` : ''}
+                </div>
+                <span class="num" style="font-size:11px;font-weight:800;color:var(--blue);">${formatJapaneseDate(ev.date)}（${dStr}）</span>
+              </div>
+              <div style="font-size:13px;font-weight:800;color:var(--text);">${escapeHtml(ev.title)}</div>
+              ${(ev.time || ev.location) ? `<div style="font-size:11px;color:var(--text-sub);margin-top:2px;">${ev.time ? '⏰ ' + escapeHtml(ev.time) : ''} ${ev.location ? '📍 ' + escapeHtml(ev.location) : ''}</div>` : ''}
+              ${ev.note ? `<div style="font-size:11px;color:var(--text-sub);margin-top:2px;">📝 ${escapeHtml(ev.note)}</div>` : ''}
+              <div style="display:flex;gap:8px;margin-top:8px;">
+                <button type="button" onclick="openDateDetailModal('${ev.date}')" style="flex:1;min-height:34px;background:#f1f5f9;border-radius:8px;font-size:11px;font-weight:800;">日付詳細・編集</button>
+                <button type="button" onclick="setPrimaryEvent('${ev.id}')" style="flex:1;min-height:34px;background:${ev.isMain ? 'var(--gold-bg)' : '#f1f5f9'};color:${ev.isMain ? '#854d0e' : 'var(--text-sub)'};border-radius:8px;font-size:11px;font-weight:800;">
+                  ${ev.isMain ? '★ 本命設定中' : '☆ 本命にする'}
+                </button>
+                <button type="button" onclick="deleteCalendarEvent('${ev.id}')" style="min-height:34px;padding:0 12px;background:var(--rose-bg);color:#be123c;border-radius:8px;font-size:11px;font-weight:800;">削除</button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    function shiftCalendarMonth(delta) {
+      let y = appState.calYear;
+      let m = appState.calMonth + delta;
+      if (m < 1) { m = 12; y--; }
+      if (m > 12) { m = 1; y++; }
+      appState.calYear = y;
+      appState.calMonth = m;
+      saveAppState();
+      renderCalendarTab();
+    }
+
+    function jumpCalendarToday() {
+      const now = new Date();
+      appState.calYear = now.getFullYear();
+      appState.calMonth = now.getMonth() + 1;
+      appState.selectedCalDate = getLocalDateStr(now);
+      saveAppState();
+      renderCalendarTab();
+    }
+
+    // 日付タップ時の詳細ボトムシート（科目名だけのタスク進捗操作に統一）
+    function openDateDetailModal(dateStr) {
+      appState.selectedCalDate = dateStr;
+      saveAppState();
+      renderCalendarTab();
+      renderDateDetailSheet(dateStr);
+      openSheet('sheet-date-detail');
+    }
+
+    function renderDateDetailSheet(dateStr) {
+      document.getElementById('date-sheet-title').textContent = `${formatJapaneseDate(dateStr)} の詳細`;
+      const dayEvents = appState.events.filter(e => e.date === dateStr);
+      const dayTasks = (appState.dailySubjectTasks || {})[dateStr] || [];
+      const dayHours = Number((appState.studyLogs || {})[dateStr]) || 0;
+
+      const activeSubs = appState.subjects.filter(s => s.active);
+      const subjOptions = (activeSubs.length > 0 ? activeSubs : appState.subjects)
+        .map(s => `<option value="${escapeHtml(s.name)}">${escapeHtml(s.name)}</option>`)
+        .join('');
+
+      const body = document.getElementById('date-sheet-body');
+      body.innerHTML = `
+        <!-- 1. その日の学習時間ログ -->
+        <div style="background:var(--emerald-bg);border:1px solid var(--emerald-border);border-radius:14px;padding:12px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+            <div>
+              <span style="font-size:11px;font-weight:800;color:#065f46;">この日の学習時間ログ</span>
+              <div class="num" style="font-size:22px;font-weight:800;color:var(--emerald);">${dayHours.toFixed(1)} 時間</div>
+            </div>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-outline" style="width:48px;min-height:38px;" onclick="adjustDateStudyLog('${dateStr}', -0.5)">-0.5h</button>
+              <button type="button" class="btn-log btn-log-blue" style="min-height:38px;" onclick="adjustDateStudyLog('${dateStr}', 0.5)">+0.5h</button>
+              <button type="button" class="btn-log btn-log-navy" style="min-height:38px;" onclick="adjustDateStudyLog('${dateStr}', 1.0)">+1.0h</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. その日の試験・官庁訪問・面接 -->
+        <div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+            <span class="field-label" style="margin:0;">試験・官庁訪問・面接予定（${dayEvents.length}件）</span>
+            <button type="button" onclick="closeSheet('sheet-date-detail'); openAddEventSheet('${dateStr}');" style="font-size:11px;font-weight:800;color:var(--blue);">+ この日に予定追加</button>
+          </div>
+          ${dayEvents.length === 0
+            ? `<p style="margin:0;font-size:12px;color:var(--text-muted);">この日に登録された試験・訪問予定はありません。</p>`
+            : dayEvents.map(ev => {
+              const meta = EVENT_TYPE_META[ev.type] || EVENT_TYPE_META.exam1;
+              return `
+                <div style="background:#f8fafc;border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin-bottom:8px;">
+                  <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;">
+                    <span class="ev-badge ${meta.badgeClass}">${escapeHtml(meta.label)}</span>
+                    <button type="button" onclick="deleteCalendarEvent('${ev.id}', '${dateStr}')" style="font-size:11px;font-weight:800;color:var(--rose);">削除</button>
+                  </div>
+                  <div style="font-size:13px;font-weight:800;margin-top:4px;">${escapeHtml(ev.title)}</div>
+                  ${(ev.time || ev.location) ? `<div style="font-size:11px;color:var(--text-sub);margin-top:2px;">${ev.time ? '⏰ ' + escapeHtml(ev.time) : ''} ${ev.location ? '📍 ' + escapeHtml(ev.location) : ''}</div>` : ''}
+                  ${ev.note ? `<div style="font-size:11px;color:var(--text-sub);margin-top:2px;">📝 ${escapeHtml(ev.note)}</div>` : ''}
+                </div>
+              `;
+            }).join('')
+          }
+        </div>
+
+        <!-- 3. その日の科目別タスク（科目名だけ＆進行度バー・ワンタップ操作） -->
+        <div style="border-top:1px solid var(--border);padding-top:12px;">
+          <span class="field-label">この日の科目別タスク（${dayTasks.length}科目）</span>
+          <div style="display:flex;gap:6px;margin-bottom:10px;">
+            <select id="date-sheet-subj-select" style="flex:1;">
+              ${subjOptions}
+            </select>
+            <button type="button" class="btn-cta" style="width:92px;flex-shrink:0;" onclick="addSubjectFromDateSheet('${dateStr}')">+ 追加</button>
+          </div>
+          ${dayTasks.length === 0
+            ? `<p style="margin:0;font-size:12px;color:var(--text-muted);">科目タスクはまだありません。</p>`
+            : dayTasks.map(item => renderDailySubjectCardHtml(dateStr, item, true)).join('')
+          }
+        </div>
+      `;
+    }
+
+    function adjustDateStudyLog(dateStr, delta) {
+      if (!appState.studyLogs) appState.studyLogs = {};
+      const current = Number(appState.studyLogs[dateStr]) || 0;
+      const next = Math.max(0, Math.round((current + delta) * 10) / 10);
+      if (next === 0) {
+        delete appState.studyLogs[dateStr];
+      } else {
+        appState.studyLogs[dateStr] = next;
+      }
+      saveAppState();
+      renderAll();
+      renderDateDetailSheet(dateStr);
+      showToast(`${formatShortMonthDay(dateStr)} の学習時間を ${next.toFixed(1)}h に更新しました`);
+    }
+
+    function addSubjectFromDateSheet(dateStr) {
+      const sel = document.getElementById('date-sheet-subj-select');
+      const subject = sel ? sel.value : '';
+      if (!subject) return;
+
+      if (!appState.dailySubjectTasks) appState.dailySubjectTasks = {};
+      if (!appState.dailySubjectTasks[dateStr]) appState.dailySubjectTasks[dateStr] = [];
+
+      const existing = appState.dailySubjectTasks[dateStr].find(t => t.subject === subject);
+      if (existing) {
+        existing.total += 1;
+      } else {
+        appState.dailySubjectTasks[dateStr].push({
+          id: 'dt_' + Date.now(),
+          subject,
+          done: 0,
+          total: 1
+        });
+      }
+      saveAppState();
+      renderAll();
+      renderDateDetailSheet(dateStr);
+      showToast(`${subject} を追加しました`);
+    }
+
+    // 試験・官庁訪問・面接追加シート
+    function openAddEventSheet(prefillDate) {
+      const dateInput = document.getElementById('ev-date-input');
+      if (dateInput) {
+        dateInput.value = prefillDate || appState.selectedCalDate || getLocalDateStr(new Date());
+      }
+      const presetBox = document.getElementById('preset-exam-buttons');
+      presetBox.innerHTML = EXAM_PRESETS_2027.map((p, idx) => {
+        const added = appState.events.some(e => e.title.includes(p.match));
+        const meta = EVENT_TYPE_META[p.type] || EVENT_TYPE_META.exam1;
+        return `
+          <button type="button" class="preset-row-btn ${added ? 'added' : ''}" onclick="addPresetExamEvent(${idx})" ${added ? 'disabled' : ''}>
+            <div style="min-width:0;">
+              <div style="font-size:12px;font-weight:800;">${escapeHtml(p.title)}</div>
+              <div class="num" style="font-size:10px;opacity:0.85;">[${escapeHtml(meta.label)}] ${formatJapaneseDate(p.date)}</div>
+            </div>
+            <span style="font-size:11px;font-weight:800;flex-shrink:0;">${added ? '追加済 ✓' : '+ 追加'}</span>
+          </button>
+        `;
+      }).join('');
+      openSheet('sheet-add-event');
+    }
+
+    function addPresetExamEvent(idx) {
+      const p = EXAM_PRESETS_2027[idx];
+      if (!p) return;
+      if (appState.events.some(e => e.title.includes(p.match))) {
+        showToast('すでに追加済みです');
+        return;
+      }
+      appState.events.push({
+        id: 'ev_' + Date.now() + '_' + idx,
+        type: p.type || 'exam1',
+        title: p.title,
+        date: p.date,
+        time: p.type === 'briefing' ? '09:00受付開始' : '09:00集合',
+        location: p.location,
+        note: p.note,
+        isMain: appState.events.length === 0
+      });
+      saveAppState();
+      renderAll();
+      openAddEventSheet();
+      showToast(`「${p.title}」を追加しました`);
+    }
+
+    function submitEventForm(event) {
+      event.preventDefault();
+      const type = document.getElementById('ev-type-select').value;
+      const title = document.getElementById('ev-title-input').value.trim();
+      const date = document.getElementById('ev-date-input').value;
+      const time = document.getElementById('ev-time-input').value.trim();
+      const location = document.getElementById('ev-location-input').value.trim();
+      const note = document.getElementById('ev-note-input').value.trim();
+      const isMain = document.getElementById('ev-main-checkbox').checked;
+
+      if (!title || !date) return;
+
+      if (isMain) {
+        appState.events.forEach(e => { e.isMain = false; });
+      }
+
+      appState.events.push({
+        id: 'ev_' + Date.now(),
+        type,
+        title,
+        date,
+        time,
+        location,
+        note,
+        isMain: isMain || appState.events.length === 0
+      });
+
+      const [y, m] = date.split('-').map(Number);
+      if (y && m) {
+        appState.calYear = y;
+        appState.calMonth = m;
+        appState.selectedCalDate = date;
+      }
+
+      document.getElementById('ev-title-input').value = '';
+      document.getElementById('ev-time-input').value = '';
+      document.getElementById('ev-location-input').value = '';
+      document.getElementById('ev-note-input').value = '';
+      document.getElementById('ev-main-checkbox').checked = false;
+
+      saveAppState();
+      closeSheet('sheet-add-event');
+      renderAll();
+      showToast(`「${title}」をカレンダーに追加しました`);
+    }
+
+    function setPrimaryEvent(evId) {
+      appState.events.forEach(e => { e.isMain = (e.id === evId); });
+      saveAppState();
+      renderAll();
+      const target = appState.events.find(e => e.id === evId);
+      if (target) showToast(`「${target.title}」を本命に設定しました`);
+    }
+
+    function deleteCalendarEvent(evId, reopenDateStr) {
+      const target = appState.events.find(e => e.id === evId);
+      appState.events = appState.events.filter(e => e.id !== evId);
+      if (appState.events.length > 0 && !appState.events.some(e => e.isMain)) {
+        appState.events[0].isMain = true;
+      }
+      saveAppState();
+      renderAll();
+      if (reopenDateStr) {
+        renderDateDetailSheet(reopenDateStr);
+      }
+      if (target) showToast(`「${target.title}」を削除しました`);
+    }
+
+    /* ==========================================================================
+       9. タブ4: 科目・比較（科目別進捗 ＆ 全9試験比較表）
+       ========================================================================== */
+    function setSubjectsViewMode(mode) {
+      appState.subjectsViewMode = mode;
+      saveAppState();
+      renderSubjectsAndMatrixTab();
+    }
+
+    function renderSubjectsAndMatrixTab() {
+      const mode = appState.subjectsViewMode || 'progress';
+      const btnProg = document.getElementById('seg-sub-progress');
+      const btnMat = document.getElementById('seg-sub-matrix');
+      if (btnProg) btnProg.classList.toggle('active', mode === 'progress');
+      if (btnMat) btnMat.classList.toggle('active', mode === 'matrix');
+
+      const viewProg = document.getElementById('view-subject-progress');
+      const viewMat = document.getElementById('view-subject-matrix');
+      if (viewProg) viewProg.style.display = mode === 'progress' ? 'flex' : 'none';
+      if (viewMat) viewMat.style.display = mode === 'matrix' ? 'flex' : 'none';
+
+      renderSubjectsProgressView();
+      renderMatrixComparisonView();
+    }
+
+    function renderSubjectsProgressView() {
+      const cats = ['すべて', ...CATEGORIES];
+      document.getElementById('subject-category-chips').innerHTML = cats.map(c => `
+        <button type="button" class="chip-btn ${appState.subjectCategoryFilter === c ? 'active' : ''}" onclick="setSubjectCategoryFilter('${c}')">
+          ${escapeHtml(c)}
+        </button>
+      `).join('');
+
+      const scope = appState.subjectScope || 'active';
+      const btnAct = document.getElementById('filter-active-only');
+      const btnAll = document.getElementById('filter-all-subs');
+      if (btnAct && btnAll) {
+        btnAct.style.background = scope === 'active' ? 'var(--navy)' : 'transparent';
+        btnAct.style.color = scope === 'active' ? '#ffffff' : 'var(--text-sub)';
+        btnAll.style.background = scope === 'all' ? 'var(--navy)' : 'transparent';
+        btnAll.style.color = scope === 'all' ? '#ffffff' : 'var(--text-sub)';
+      }
+
+      const activeTotal = appState.subjects.filter(s => s.active).length;
+      document.getElementById('subject-count-summary').textContent = `受験対象: ${activeTotal} / 全${appState.subjects.length}科目`;
+
+      const filtered = appState.subjects.filter(s => {
+        if (appState.subjectCategoryFilter !== 'すべて' && s.category !== appState.subjectCategoryFilter) return false;
+        if (scope === 'active' && !s.active) return false;
+        return true;
+      });
+
+      const listEl = document.getElementById('subject-cards-list');
+      if (filtered.length === 0) {
+        listEl.innerHTML = `<div class="card" style="text-align:center;color:var(--text-sub);font-size:12px;">表示条件に一致する科目がありません。「全科目」に切り替えて対象をONにしてください。</div>`;
+        return;
+      }
+
+      listEl.innerHTML = filtered.map(s => {
+        const videoCount = Array.isArray(s.videos) ? s.videos.length : 0;
+        const isHigh = s.progress >= 80;
+        return `
+          <div class="subj-box ${s.active ? '' : 'excluded'}">
+            <div class="subj-header">
+              <div style="min-width:0;flex:1;">
+                <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                  <span class="cat-pill">${escapeHtml(s.category)}</span>
+                  <span class="num" style="font-size:11px;font-weight:700;color:var(--text-sub);">累計 ${Number(s.hours).toFixed(1)}h</span>
+                  ${videoCount > 0 ? `<span style="font-size:10px;font-weight:800;color:#be123c;background:var(--rose-bg);padding:1px 6px;border-radius:6px;">▶ 動画${videoCount}本</span>` : ''}
+                </div>
+                <h3 class="subj-name">${escapeHtml(s.name)}</h3>
+                ${s.note ? `<p class="subj-note-line">📝 ${escapeHtml(s.note)}</p>` : ''}
+              </div>
+              <label class="toggle-wrap" aria-label="${escapeHtml(s.name)}の受験対象切替">
+                <input type="checkbox" ${s.active ? 'checked' : ''} onchange="toggleSubjectActive('${s.id}', this.checked)" />
+                <span class="toggle-track"></span>
+                <span class="toggle-text">${s.active ? '対象' : '除外'}</span>
+              </label>
+            </div>
+
+            <div class="slider-panel">
+              <div class="slider-top">
+                <span id="pct-label-${s.id}" class="pct-badge ${isHigh ? 'high' : ''} num">進捗 ${s.progress}%</span>
+                <div class="fine-btns">
+                  <button type="button" class="btn-fine" onclick="adjustSubjectProgress('${s.id}', -5)">-5%</button>
+                  <button type="button" class="btn-fine" onclick="adjustSubjectProgress('${s.id}', 5)">+5%</button>
+                </div>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                step="1"
+                value="${s.progress}"
+                class="custom-slider ${isHigh ? 'high' : ''}"
+                oninput="onSliderLiveInput('${s.id}', this.value)"
+                onchange="onSliderCommit('${s.id}', this.value)"
+              />
+            </div>
+
+            <div class="subj-bottom-bar">
+              <div class="lap-stepper">
+                <button type="button" class="lap-btn" onclick="adjustSubjectLaps('${s.id}', -1)" aria-label="周回を減らす">－</button>
+                <span class="lap-text num">${s.laps}周</span>
+                <button type="button" class="lap-btn" onclick="adjustSubjectLaps('${s.id}', 1)" aria-label="周回を増やす">＋</button>
+              </div>
+
+              <div class="quick-log-group">
+                <button type="button" class="btn-log btn-log-blue" onclick="quickLogStudy('${s.id}', 0.5)">+0.5h</button>
+                <button type="button" class="btn-log btn-log-navy" onclick="quickLogStudy('${s.id}', 1.0)">+1.0h</button>
+              </div>
+
+              <button type="button" class="btn-detail" onclick="openSubjectDetailSheet('${s.id}')">
+                詳細・講義リンク
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function setSubjectCategoryFilter(cat) {
+      appState.subjectCategoryFilter = cat;
+      saveAppState();
+      renderSubjectsProgressView();
+    }
+
+    function setSubjectScope(scope) {
+      appState.subjectScope = scope;
+      saveAppState();
+      renderSubjectsProgressView();
+    }
+
+    function toggleSubjectActive(id, isActive) {
+      const s = appState.subjects.find(item => item.id === id);
+      if (!s) return;
+      s.active = isActive;
+      saveAppState();
+      renderAll();
+      showToast(`${s.name} を「${isActive ? '受験対象' : '対象外'}」に変更しました`);
+    }
+
+    function onSliderLiveInput(id, val) {
+      const num = Math.max(0, Math.min(100, Number(val)));
+      const label = document.getElementById('pct-label-' + id);
+      if (label) {
+        label.textContent = `進捗 ${num}%`;
+        label.className = 'pct-badge' + (num >= 80 ? ' high' : '') + ' num';
+      }
+    }
+
+    function onSliderCommit(id, val) {
+      const s = appState.subjects.find(item => item.id === id);
+      if (!s) return;
+      s.progress = Math.max(0, Math.min(100, Number(val)));
+      saveAppState();
+      renderAll();
+    }
+
+    function adjustSubjectProgress(id, delta) {
+      const s = appState.subjects.find(item => item.id === id);
+      if (!s) return;
+      s.progress = Math.max(0, Math.min(100, (Number(s.progress) || 0) + delta));
+      saveAppState();
+      renderAll();
+    }
+
+    function adjustSubjectLaps(id, delta) {
+      const s = appState.subjects.find(item => item.id === id);
+      if (!s) return;
+      s.laps = Math.max(0, (Number(s.laps) || 0) + delta);
+      saveAppState();
+      renderAll();
+    }
+
+    function openSubjectDetailSheet(id) {
+      const s = appState.subjects.find(item => item.id === id);
+      if (!s) return;
+      document.getElementById('detail-subject-id').value = s.id;
+      document.getElementById('detail-sheet-title').textContent = `${s.name}（詳細・講義リンク）`;
+      document.getElementById('detail-note-input').value = s.note || '';
+      document.getElementById('new-link-title').value = '';
+      document.getElementById('new-link-url').value = '';
+      renderSubjectVideoLinksList(s);
+      openSheet('sheet-subject-detail');
+    }
+
+    function renderSubjectVideoLinksList(subj) {
+      const container = document.getElementById('detail-links-container');
+      const videos = Array.isArray(subj.videos) ? subj.videos : [];
+      if (videos.length === 0) {
+        container.innerHTML = `<p style="margin:0;font-size:11px;color:var(--text-muted);">まだYouTube講義リンクは登録されていません。</p>`;
+        return;
+      }
+      container.innerHTML = videos.map((v, idx) => `
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--rose-bg);border:1px solid var(--rose-border);border-radius:10px;padding:8px 10px;">
+          <a href="${escapeHtml(v.url)}" target="_blank" rel="noopener noreferrer" style="font-size:12px;font-weight:800;color:#be123c;text-decoration:none;min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+            ▶ ${escapeHtml(v.title || 'YouTube講義を開く')}
+          </a>
+          <button type="button" onclick="removeSubjectVideoLink('${subj.id}', ${idx})" style="font-size:11px;font-weight:800;color:#64748b;padding:4px 6px;">削除</button>
+        </div>
+      `).join('');
+    }
+
+    function saveSubjectNote() {
+      const id = document.getElementById('detail-subject-id').value;
+      const s = appState.subjects.find(item => item.id === id);
+      if (!s) return;
+      s.note = document.getElementById('detail-note-input').value.trim();
+      saveAppState();
+      renderAll();
+      showToast('学習メモを保存しました');
+    }
+
+    function addSubjectVideoLink() {
+      const id = document.getElementById('detail-subject-id').value;
+      const s = appState.subjects.find(item => item.id === id);
+      if (!s) return;
+      const titleInput = document.getElementById('new-link-title');
+      const urlInput = document.getElementById('new-link-url');
+      const url = urlInput.value.trim();
+      if (!url) {
+        showToast('YouTube講義のURLを入力してください');
+        return;
+      }
+      const title = titleInput.value.trim() || `${s.name} 解説講義`;
+      if (!Array.isArray(s.videos)) s.videos = [];
+      s.videos.push({ title, url });
+      titleInput.value = '';
+      urlInput.value = '';
+      saveAppState();
+      renderSubjectVideoLinksList(s);
+      renderAll();
+      showToast('YouTube講義リンクを追加しました');
+    }
+
+    function removeSubjectVideoLink(subjectId, index) {
+      const s = appState.subjects.find(item => item.id === subjectId);
+      if (!s || !Array.isArray(s.videos)) return;
+      s.videos.splice(index, 1);
+      saveAppState();
+      renderSubjectVideoLinksList(s);
+      renderAll();
+      showToast('リンクを削除しました');
+    }
+
+    // 9B. 試験別 科目比較表（全9試験）
+    const MATRIX_PRESET_FILTERS = [
+      { id: 'all', label: '全9試験表示', cols: ['sougou', 'ippan', 'kokuzei', 'zaimu', 'rouki', 'chiho', 'tokubetsu', 'tokyo', 'police_fire'] },
+      { id: 'ippan_koku_zaimu', label: '国一般×国税×財務', cols: ['ippan', 'kokuzei', 'zaimu'] },
+      { id: 'gyosei_3', label: '王道行政併願', cols: ['ippan', 'chiho', 'tokubetsu'] },
+      { id: 'shutoken', label: '首都圏枠', cols: ['tokubetsu', 'tokyo', 'ippan'] },
+      { id: 'senmon_all', label: '国家専門職比較', cols: ['sougou', 'kokuzei', 'zaimu', 'rouki'] },
+      { id: 'police_fire', label: '警察・消防', cols: ['police_fire', 'chiho', 'tokyo'] }
+    ];
+
+    function renderMatrixComparisonView() {
+      const activeCols = appState.selectedMatrixCols && appState.selectedMatrixCols.length > 0
+        ? appState.selectedMatrixCols
+        : ['sougou', 'ippan', 'kokuzei'];
+
+      document.getElementById('matrix-preset-chips').innerHTML = MATRIX_PRESET_FILTERS.map((p, idx) => {
+        const isMatch = p.cols.length === activeCols.length && p.cols.every(c => activeCols.includes(c));
+        return `
+          <button type="button" class="chip-btn ${isMatch ? 'active' : ''}" onclick="applyMatrixPresetByIndex(${idx})">
+            ${escapeHtml(p.label)}
+          </button>
+        `;
+      }).join('');
+
+      document.getElementById('matrix-col-toggles').innerHTML = MATRIX_COLUMNS.map(col => {
+        const isSel = activeCols.includes(col.id);
+        return `
+          <button type="button" class="col-chip ${isSel ? 'selected' : ''}" onclick="toggleMatrixCol('${col.id}')">
+            ${isSel ? '✓ ' : ''}${escapeHtml(col.label)}
+          </button>
+        `;
+      }).join('');
+
+      const visibleCols = MATRIX_COLUMNS.filter(c => activeCols.includes(c.id));
+      const commonMust = appState.subjects.filter(s => {
+        const row = SUBJECT_MATRIX_MAP[s.name] || {};
+        return visibleCols.length > 0 && visibleCols.every(col => row[col.id] === 'must');
+      });
+
+      const uniqueNotable = appState.subjects.filter(s => {
+        const row = SUBJECT_MATRIX_MAP[s.name] || {};
+        const mustOrOptCount = visibleCols.filter(col => row[col.id] === 'must' || row[col.id] === 'opt').length;
+        return mustOrOptCount > 0 && mustOrOptCount < visibleCols.length && (
+          s.name === '会計学' ||
+          s.name === '労働法・労働事情' ||
+          s.name === '専門記述' ||
+          s.name.includes('SPI') ||
+          s.name === '心理学・教育学・福祉'
+        );
+      });
+
+      document.getElementById('matrix-summary-card').innerHTML = `
+        <div style="font-size:12px;font-weight:800;color:#fde047;">選択中の${visibleCols.length}試験の科目診断</div>
+        <div class="summary-2col">
+          <div class="summary-tile">
+            <span>全選択試験で共通必須（◎）</span>
+            <strong class="num">${commonMust.length}科目</strong>
+            <p>${commonMust.length > 0 ? commonMust.slice(0, 4).map(s => escapeHtml(s.name.replace(/（.*?）/g, ''))).join('・') + (commonMust.length > 4 ? ' 他' : '') : '共通の◎必須科目なし'}</p>
+          </div>
+          <div class="summary-tile">
+            <span>特定試験で差がつく独自科目</span>
+            <strong class="num">${uniqueNotable.length}科目</strong>
+            <p>${uniqueNotable.length > 0 ? uniqueNotable.map(s => escapeHtml(s.name.replace(/（.*?）/g, ''))).join('・') : '選択試験間で独自科目差なし'}</p>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('matrix-thead').innerHTML = `
+        <tr>
+          <th class="sticky-first">科目（進捗%）</th>
+          ${visibleCols.map(c => `<th>${escapeHtml(c.label)}</th>`).join('')}
+        </tr>
+      `;
+
+      let rowsHtml = '';
+      CATEGORIES.forEach(cat => {
+        const catSubjects = appState.subjects.filter(s => s.category === cat);
+        if (!catSubjects.length) return;
+        rowsHtml += `
+          <tr class="cat-divider">
+            <td colspan="${visibleCols.length + 1}">${escapeHtml(cat)}</td>
+          </tr>
+        `;
+        catSubjects.forEach(s => {
+          const row = SUBJECT_MATRIX_MAP[s.name] || {};
+          const dotColor = s.active ? '#2563eb' : '#cbd5e1';
+          rowsHtml += `
+            <tr onclick="openSubjectDetailSheet('${s.id}')" style="cursor:pointer;">
+              <td class="sticky-first">
+                <div style="display:flex;align-items:center;gap:5px;">
+                  <span style="width:7px;height:7px;border-radius:50%;background:${dotColor};flex-shrink:0;"></span>
+                  <span style="font-weight:800;color:var(--text);line-height:1.25;">${escapeHtml(s.name)}</span>
+                </div>
+                <div class="num" style="font-size:10px;color:var(--text-sub);margin-top:2px;padding-left:12px;">
+                  ${s.active ? `対象・進捗 ${s.progress}%` : '対象外'}
+                </div>
+              </td>
+              ${visibleCols.map(col => {
+                const code = row[col.id] || 'none';
+                let badge = '<span class="mark-badge mark-none">－</span>';
+                if (code === 'must') badge = '<span class="mark-badge mark-must">◎</span>';
+                else if (code === 'opt') badge = '<span class="mark-badge mark-opt">○</span>';
+                else if (code === 'part') badge = '<span class="mark-badge mark-part">△</span>';
+                return `<td style="text-align:center;">${badge}</td>`;
+              }).join('')}
+            </tr>
+          `;
+        });
+      });
+      document.getElementById('matrix-tbody').innerHTML = rowsHtml;
+    }
+
+    function applyMatrixPresetByIndex(idx) {
+      const preset = MATRIX_PRESET_FILTERS[idx];
+      if (!preset) return;
+      appState.selectedMatrixCols = [...preset.cols];
+      saveAppState();
+      renderMatrixComparisonView();
+    }
+
+    function toggleMatrixCol(colId) {
+      const current = appState.selectedMatrixCols || [];
+      if (current.includes(colId)) {
+        if (current.length <= 1) {
+          showToast('最低1つの試験を選択してください');
+          return;
+        }
+        appState.selectedMatrixCols = current.filter(id => id !== colId);
+      } else {
+        appState.selectedMatrixCols = [...current, colId];
+      }
+      saveAppState();
+      renderMatrixComparisonView();
+    }
+
+    /* ==========================================================================
+       10. タブ5: 区分・設定（4テンプレート & 自動バックアップ & JSON）
+       ========================================================================== */
+    function toggleAutoFileDownload(isOn) {
+      const cfg = readAutoFileConfig();
+      cfg.enabled = isOn;
+      writeAutoFileConfig(cfg);
+      renderSettingsTab();
+      if (isOn) {
+        showToast('1日1回の自動ファイル保存をONにしました');
+      } else {
+        showToast('自動ファイル保存をOFFにしました');
+      }
+    }
+
+    function renderSettingsTab() {
+      // 自動保存サマリーと自動ファイルDLトグル
+      const autoFileCfg = readAutoFileConfig();
+      const autoChk = document.getElementById('toggle-auto-file-dl');
+      const autoLbl = document.getElementById('auto-file-dl-label');
+      const liveSum = document.getElementById('autosave-live-summary');
+      if (autoChk) autoChk.checked = !!autoFileCfg.enabled;
+      if (autoLbl) autoLbl.textContent = autoFileCfg.enabled ? 'ON' : 'OFF';
+      if (liveSum) {
+        liveSum.textContent = lastLocalSavedTime
+          ? `最終自動保存: 本日 ${lastLocalSavedTime}（端末内2重保存＋履歴10件自動記録中）`
+          : '操作するたびに端末内（2重保存）へ自動記録中';
+      }
+
+      document.getElementById('settings-track-list').innerHTML = TRACK_TEMPLATES.map(tpl => {
+        const isSelected = appState.selectedTrackId === tpl.id;
+        return `
+          <button type="button" class="track-card ${isSelected ? 'selected' : ''}" onclick="applyTrackTemplate('${tpl.id}')">
+            <div style="min-width:0;flex:1;">
+              <div style="font-size:13px;font-weight:800;color:var(--text);">${escapeHtml(tpl.name)}</div>
+              <div style="font-size:11px;color:var(--text-sub);margin-top:2px;line-height:1.4;">${escapeHtml(tpl.desc)}</div>
+              <div style="font-size:10px;font-weight:800;color:var(--blue);margin-top:4px;">対象科目数: ${tpl.activeSubjects.length}科目</div>
+            </div>
+            <span style="font-size:11px;font-weight:800;color:${isSelected ? 'var(--blue)' : 'var(--text-sub)'};flex-shrink:0;">
+              ${isSelected ? '適用中 ✓' : '切替 →'}
+            </span>
+          </button>
+        `;
+      }).join('');
+
+      // 自動バックアップ履歴（最新10チェックポイント）
+      const snaps = readSnapshots();
+      const snapEl = document.getElementById('auto-snapshot-list');
+      if (snapEl) {
+        if (snaps.length === 0) {
+          snapEl.innerHTML = `<p style="margin:0;font-size:12px;color:var(--text-sub);text-align:center;">履歴はまだありません。</p>`;
+        } else {
+          snapEl.innerHTML = snaps.map(s => {
+            const key = s.id || s.date;
+            const isConf = snapConfirmId === key;
+            return `
+              <div class="history-row">
+                <div style="min-width:0;flex:1;">
+                  <div class="num" style="font-size:12px;font-weight:800;color:var(--text);">
+                    ${formatJapaneseDate(s.date)} <span style="font-size:11px;color:var(--blue);">${escapeHtml(s.time)}</span>
+                  </div>
+                  <div class="num" style="font-size:11px;color:var(--text-sub);margin-top:2px;">
+                    対象平均進捗: <strong>${s.avgPct}%</strong> ／ 累計学習: <strong>${Number(s.totalHours).toFixed(1)}h</strong>
+                  </div>
+                </div>
+                <button type="button" class="btn-restore-snap ${isConf ? 'confirm' : ''}" onclick="restoreSnapshotById('${escapeHtml(key)}')">
+                  ${isConf ? '再タップで復元' : 'この時点に戻す'}
+                </button>
+              </div>
+            `;
+          }).join('');
+        }
+      }
+
+      // GitHub Gist 同期状態
+      const cfg = readGistConfig();
+      const banner = document.getElementById('gist-status-banner');
+      const tokenInput = document.getElementById('gist-token-input');
+      const gistInput = document.getElementById('gist-id-input');
+      const unlinkWrap = document.getElementById('gist-unlink-wrap');
+
+      if (tokenInput && document.activeElement !== tokenInput && cfg.token) tokenInput.value = cfg.token;
+      if (gistInput && document.activeElement !== gistInput && cfg.gistId) gistInput.value = cfg.gistId;
+      if (unlinkWrap) unlinkWrap.style.display = (cfg.enabled && cfg.token) ? 'block' : 'none';
+
+      if (banner) {
+        if (cfg.enabled && cfg.token) {
+          if (gistStatus === 'err' || cfg.lastError) {
+            banner.className = 'cloud-banner err';
+            banner.innerHTML = `同期エラー：${escapeHtml(cfg.lastError || 'トークンまたは通信状況を確認してください')}`;
+          } else {
+            banner.className = 'cloud-banner ok';
+            banner.innerHTML = `<strong>☁️ クラウド自動バックアップ稼働中</strong>（変更の約2秒後に自動保存）<br>最終同期: ${escapeHtml(cfg.lastSync || '待機中')} ／ Gist ID: <span class="num">${escapeHtml(cfg.gistId || '自動発行')}</span>`;
+          }
+        } else {
+          banner.className = 'cloud-banner';
+          banner.innerHTML = `未連携（上の手順でトークンを1度登録すると、以降は完全自動でクラウドにもバックアップされます）`;
+        }
+      }
+    }
+
+    function restoreSnapshotById(snapKey) {
+      if (snapConfirmId !== snapKey) {
+        snapConfirmId = snapKey;
+        renderSettingsTab();
+        showToast('この時点のデータに戻すにはもう一度タップしてください');
+        clearTimeout(snapConfirmTimer);
+        snapConfirmTimer = setTimeout(() => {
+          snapConfirmId = null;
+          renderSettingsTab();
+        }, 4000);
+        return;
+      }
+      clearTimeout(snapConfirmTimer);
+      snapConfirmId = null;
+
+      const target = readSnapshots().find(x => (x.id || x.date) === snapKey);
+      if (!target || !target.data) {
+        showToast('指定時点のデータが見つかりませんでした');
+        return;
+      }
+      try {
+        appState = normalizeState(JSON.parse(target.data));
+        saveAppState();
+        renderAll();
+        showToast(`${formatJapaneseDate(target.date)} ${target.time} のデータに復元しました`);
+      } catch (e) {
+        showToast('復元に失敗しました');
+      }
+    }
+
+    async function saveAndSyncGist() {
+      const tokenEl = document.getElementById('gist-token-input');
+      const gistEl = document.getElementById('gist-id-input');
+      const token = tokenEl ? tokenEl.value.trim() : '';
+      const gistId = gistEl ? gistEl.value.trim() : '';
+      if (!token) {
+        showToast('GitHubトークンを入力してください');
+        return;
+      }
+      writeGistConfig({
+        token,
+        gistId,
+        enabled: true,
+        lastSync: readGistConfig().lastSync || '',
+        lastError: ''
+      });
+      await pushGistBackup(false);
+    }
+
+    async function pushGistBackup(silent) {
+      const cfg = readGistConfig();
+      if (!cfg.enabled || !cfg.token) return;
+
+      const btn = document.getElementById('btn-gist-sync');
+      if (btn && !silent) btn.textContent = '同期中...';
+      gistStatus = 'syncing';
+      refreshBackupBadge();
+
+      try {
+        const endpoint = cfg.gistId
+          ? `https://api.github.com/gists/${encodeURIComponent(cfg.gistId)}`
+          : 'https://api.github.com/gists';
+        const method = cfg.gistId ? 'PATCH' : 'POST';
+
+        const res = await fetch(endpoint, {
+          method,
+          headers: {
+            'Authorization': `Bearer ${cfg.token}`,
+            'Accept': 'application/vnd.github+json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            description: '公務員試験 学習＆日程ナビ 自動バックアップ',
+            public: false,
+            files: {
+              'koumuin_navi_backup.json': {
+                content: JSON.stringify(appState, null, 2)
+              }
+            }
+          })
+        });
+
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}`);
+        }
+
+        const data = await res.json();
+        const now = new Date();
+        const hhmm = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+        cfg.gistId = data.id || cfg.gistId;
+        cfg.lastSync = `${getLocalDateStr(now)} ${hhmm}`;
+        cfg.lastError = '';
+        writeGistConfig(cfg);
+
+        gistStatus = 'ok';
+        refreshBackupBadge();
+        renderSettingsTab();
+        if (!silent) showToast('GitHub Gistへバックアップしました');
+      } catch (err) {
+        cfg.lastError = err.message || '通信エラー';
+        writeGistConfig(cfg);
+        gistStatus = 'err';
+        refreshBackupBadge();
+        renderSettingsTab();
+        if (!silent) showToast(`同期エラー: ${cfg.lastError}`);
+      } finally {
+        if (btn && !silent) btn.textContent = '設定保存＆今すぐ同期';
+      }
+    }
+
+    async function restoreFromGist() {
+      const tokenEl = document.getElementById('gist-token-input');
+      const gistEl = document.getElementById('gist-id-input');
+      const cfg = readGistConfig();
+      const token = (tokenEl && tokenEl.value.trim()) || cfg.token;
+      let gistId = (gistEl && gistEl.value.trim()) || cfg.gistId;
+
+      if (!token) {
+        showToast('GitHubトークンを入力してください');
+        return;
+      }
+
+      const btn = document.getElementById('btn-gist-restore');
+      if (btn) btn.textContent = '復元中...';
+
+      try {
+        if (!gistId) {
+          const listRes = await fetch('https://api.github.com/gists?per_page=30', {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Accept': 'application/vnd.github+json'
+            }
+          });
+          if (!listRes.ok) throw new Error(`HTTP ${listRes.status}`);
+          const gists = await listRes.json();
+          const found = Array.isArray(gists)
+            ? gists.find(g => g.files && g.files['koumuin_navi_backup.json'])
+            : null;
+          if (!found) {
+            showToast('バックアップGistが見つかりませんでした');
+            return;
+          }
+          gistId = found.id;
+        }
+
+        const res = await fetch(`https://api.github.com/gists/${encodeURIComponent(gistId)}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/vnd.github+json'
+          }
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const gistData = await res.json();
+        const fileObj = gistData.files && gistData.files['koumuin_navi_backup.json'];
+        if (!fileObj || !fileObj.content) {
+          showToast('Gist内にデータが見つかりませんでした');
+          return;
+        }
+
+        const parsed = JSON.parse(fileObj.content);
+        if (!parsed || !Array.isArray(parsed.subjects) || !Array.isArray(parsed.events)) {
+          showToast('バックアップデータの形式が正しくありません');
+          return;
+        }
+
+        appState = normalizeState(parsed);
+        saveAppState(true);
+
+        const now = new Date();
+        const hhmm = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+        writeGistConfig({
+          token,
+          gistId,
+          enabled: true,
+          lastSync: `${getLocalDateStr(now)} ${hhmm}`,
+          lastError: ''
+        });
+        gistStatus = 'ok';
+
+        renderAll();
+        showToast('Gistから学習データを復元しました');
+      } catch (err) {
+        showToast(`復元エラー: ${err.message || '通信エラー'}`);
+      } finally {
+        if (btn) btn.textContent = 'Gistから復元';
+      }
+    }
+
+    function unlinkGist() {
+      writeGistConfig({ token: '', gistId: '', enabled: false, lastSync: '', lastError: '' });
+      gistStatus = 'idle';
+      const tokenEl = document.getElementById('gist-token-input');
+      const gistEl = document.getElementById('gist-id-input');
+      if (tokenEl) tokenEl.value = '';
+      if (gistEl) gistEl.value = '';
+      renderAll();
+      showToast('クラウド同期を解除しました');
+    }
+
+    function applyTrackTemplate(trackId) {
+      const tpl = TRACK_TEMPLATES.find(t => t.id === trackId);
+      if (!tpl) return;
+      appState.selectedTrackId = trackId;
+      appState.subjects.forEach(s => {
+        s.active = tpl.activeSubjects.includes(s.name);
+      });
+      saveAppState();
+      renderAll();
+      showToast(`「${tpl.name}」の科目構成に切り替えました`);
+    }
+
+    function exportJsonCopy() {
+      const jsonStr = JSON.stringify(appState, null, 2);
+      const area = document.getElementById('backup-json-textarea');
+      if (area) area.value = jsonStr;
+      copyTextSafely(jsonStr, '学習データのJSONをコピーしました');
+    }
+
+    function downloadJsonFile() {
+      const jsonStr = JSON.stringify(appState, null, 2);
+      const area = document.getElementById('backup-json-textarea');
+      if (area) area.value = jsonStr;
+      try {
+        const blob = new Blob([jsonStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `koumuin_navi_backup_${getLocalDateStr(new Date())}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast('バックアップJSONファイルを書き出しました');
+      } catch (e) {
+        copyTextSafely(jsonStr, 'JSONをコピーしました');
+      }
+    }
+
+    function importJsonBackup() {
+      const area = document.getElementById('backup-json-textarea');
+      const raw = area ? area.value.trim() : '';
+      if (!raw) {
+        showToast('復元するJSONデータを貼り付けてください');
+        return;
+      }
+      try {
+        const parsed = JSON.parse(raw);
+        if (!parsed || !Array.isArray(parsed.subjects) || !Array.isArray(parsed.events)) {
+          showToast('JSONの形式が正しくありません');
+          return;
+        }
+        appState = normalizeState(parsed);
+        saveAppState();
+        renderAll();
+        showToast('JSONから学習データを復元しました！');
+      } catch (e) {
+        showToast('JSONの読み込みに失敗しました');
+      }
+    }
+
+    function handleResetClick() {
+      const btn = document.getElementById('btn-reset-demo');
+      if (!resetConfirmPending) {
+        resetConfirmPending = true;
+        if (btn) btn.textContent = '本当に初期化？（再タップで実行）';
+        showToast('確認：もう一度タップすると初期データに戻ります');
+        clearTimeout(resetConfirmTimer);
+        resetConfirmTimer = setTimeout(() => {
+          resetConfirmPending = false;
+          if (btn) btn.textContent = '初期データに戻す';
+        }, 4000);
+        return;
+      }
+
+      clearTimeout(resetConfirmTimer);
+      resetConfirmPending = false;
+      if (btn) btn.textContent = '初期データに戻す';
+
+      appState = buildInitialState();
+      saveAppState();
+      renderAll();
+      showToast('初期デモデータにリセットしました');
+    }
+
+    /* ==========================================================================
+       11. アプリ初期化（localStorage + IndexedDB + Gist 自動復旧対応）
+       ========================================================================== */
+    (async function initApp() {
+      let hadLocal = false;
+      try {
+        hadLocal = loadAppState();
+        switchTab(appState.activeTab || 'home');
+      } catch (e) {
+        appState = buildInitialState();
+        switchTab('home');
+      }
+
+      // localStorageが空だった場合、IndexedDBの2重バックアップまたはGistから自動復旧
+      if (!hadLocal) {
+        try {
+          const idbRaw = await idbMirror.get(STORAGE_KEY);
+          if (idbRaw) {
+            appState = normalizeState(JSON.parse(idbRaw));
+            storage.set(STORAGE_KEY, JSON.stringify(appState));
+            const idbSnaps = await idbMirror.get(STORAGE_KEY_SNAPSHOTS);
+            if (idbSnaps) storage.set(STORAGE_KEY_SNAPSHOTS, idbSnaps);
+            renderAll();
+            showToast('端末内バックアップからデータを自動復旧しました');
+            return;
+          }
+          const idbGist = await idbMirror.get(STORAGE_KEY_GIST);
+          if (idbGist) {
+            storage.set(STORAGE_KEY_GIST, idbGist);
+            const gCfg = readGistConfig();
+            if (gCfg.enabled && gCfg.token) {
+              await restoreFromGist();
+            }
+          }
+        } catch (err) {}
+      }
+    })();
+  </script>
+</body>
+</html>
